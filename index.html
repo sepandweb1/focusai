@@ -57,7 +57,9 @@
 <script>    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyM7_r6et0xz-1W1pV1iTYgciLeALMchllPOCPLIFuWp7Mcwz7I7cCvuALswQaG2rZ6/exec';
     const quotes = [        "«زمان دارایی تجدیدناپذیری است؛ آن را خرج نکن، سرمایه‌گذاری کن.»",        "«امروز، همان فردایی است که دیروز نگرانش بودی. چه کردی؟»",        "«تفاوت برندگان و بازندگان در نحوه مدیریت این ۲۴ ساعت مشترک است.»",        "«زندگی شمارش معکوس است؛ هر ثانیه که می‌گذرد، یعنی یک قدم جلوتر یا درجا زدن.»",        "«کارهای بزرگ با انباشت دقیقه‌های کوچک متمرکز ساخته می‌شوند.»"    ];
     // Telegram Web App Theme Integration    const tg = window.Telegram?.WebApp;    if (tg) {        tg.ready();        tg.expand();    }
-    // Theme Management (Telegram Auto-Sync + Manual Toggle)    const themeBtn = document.getElementById('themeBtn');    let currentTheme = localStorage.getItem('theme') || (tg && tg.colorScheme ? tg.colorScheme : 'light');        function applyTheme(theme) {        document.documentElement.setAttribute('data-theme', theme);        themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';        localStorage.setItem('theme', theme);    }    applyTheme(currentTheme);
+
+    // Theme Management (Telegram Auto-Sync + Manual Toggle)    const themeBtn = document.getElementById('themeBtn');    let currentTheme = localStorage.getItem('theme') || (tg && tg.colorScheme ? tg.colorScheme : 'light');        function applyTheme(theme) {        document.documentElement.setAttribute('data-theme', theme);        themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';        localStorage.setItem('theme', theme);    }
+    applyTheme(currentTheme);
 
     themeBtn.addEventListener('click', () => {        currentTheme = currentTheme === 'light' ? 'dark' : 'light';        applyTheme(currentTheme);    });
 
