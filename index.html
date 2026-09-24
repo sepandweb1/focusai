@@ -58,15 +58,18 @@
     const quotes = [        "«زمان دارایی تجدیدناپذیری است؛ آن را خرج نکن، سرمایه‌گذاری کن.»",        "«امروز، همان فردایی است که دیروز نگرانش بودی. چه کردی؟»",        "«تفاوت برندگان و بازندگان در نحوه مدیریت این ۲۴ ساعت مشترک است.»",        "«زندگی شمارش معکوس است؛ هر ثانیه که می‌گذرد، یعنی یک قدم جلوتر یا درجا زدن.»",        "«کارهای بزرگ با انباشت دقیقه‌های کوچک متمرکز ساخته می‌شوند.»"    ];
     // Telegram Web App Theme Integration    const tg = window.Telegram?.WebApp;    if (tg) {        tg.ready();        tg.expand();    }
     // Theme Management (Telegram Auto-Sync + Manual Toggle)    const themeBtn = document.getElementById('themeBtn');    let currentTheme = localStorage.getItem('theme') || (tg && tg.colorScheme ? tg.colorScheme : 'light');        function applyTheme(theme) {        document.documentElement.setAttribute('data-theme', theme);        themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';        localStorage.setItem('theme', theme);    }    applyTheme(currentTheme);
+
     themeBtn.addEventListener('click', () => {        currentTheme = currentTheme === 'light' ? 'dark' : 'light';        applyTheme(currentTheme);    });
+
     // Fullscreen Toggle    const fullscreenBtn = document.getElementById('fullscreenBtn');    fullscreenBtn.addEventListener('click', () => {        if (!document.fullscreenElement) {            document.documentElement.requestFullscreen().catch(err => console.log(err));        } else {            if (document.exitFullscreen) {                document.exitFullscreen();            }        }    });
+
     // Refresh Button & Data Fetching with Timeout Safety    const refreshBtn = document.getElementById('refreshBtn');    refreshBtn.addEventListener('click', () => {        loadTasksFromGoogle();    });
+
     function loadTasksFromGoogle() {        const calendarListDiv = document.getElementById('calendarList');        const taskListDiv = document.getElementById('taskList');        const refreshStatus = document.getElementById('refreshStatus');        const callbackName = 'handleGoogleTasksResponse';
 
         refreshBtn.style.transform = 'rotate(360deg)';        refreshBtn.style.transition = 'transform 0.5s ease';        setTimeout(() => refreshBtn.style.transform = 'none', 500);
 
-        const timeoutId = setTimeout(() => {            if (calendarListDiv.innerHTML.includes('بارگذاری')) {                calendarListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">عدم پاسخ‌گویی سرور گوگل (روی 🔄 کلیک کنید)</div>';                taskListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">برای بارگذاری مجدد تلاش کنید</div>';                refreshStatus.textContent = 'خطا در ارتباط یا نیاز به تایید دسترسی در گوگل.';            }
-        }, 8000);
+        const timeoutId = setTimeout(() => {            if (calendarListDiv.innerHTML.includes('بارگذاری')) {                calendarListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">عدم پاسخ‌گویی سرور گوگل (روی 🔄 کلیک کنید)</div>';                taskListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">برای بارگذاری مجدد تلاش کنید</div>';                refreshStatus.textContent = 'خطا در ارتباط یا نیاز به تایید دسترسی در گوگل.';            }        }, 8000);
 
         window[callbackName] = function(items) {            clearTimeout(timeoutId);            calendarListDiv.innerHTML = '';            taskListDiv.innerHTML = '';
 
@@ -82,7 +85,8 @@
 
             // Render Calendar Events (Right Side)            if (calendarItems.length === 0) {                calendarListDiv.innerHTML = '<div class="empty-text">رویدادی برای امروز ثبت نشده است.</div>';            } else {                calendarItems.forEach(item => {                    const el = document.createElement('a');                    el.className = 'task-item';                    el.href = 'https://calendar.google.com';                    el.target = '_blank';                    el.innerHTML = `<span>${item.title}</span> <span class="task-time">${item.time || ''}</span>`;                    calendarListDiv.appendChild(el);                });            }
 
-            // Render Tasks (Left Side)            if (taskItems.length === 0) {                taskListDiv.innerHTML = '<div class="empty-text">تسک فعالی وجود ندارد.</div>';            } else {                taskItems.forEach(item => {                    const cleanTitle = item.title.replace(/^📌\s*/, '');                    const el = document.createElement('a');                    el.className = 'task-item';                    el.href = 'https://tasks.google.com';                    el.target = '_blank';                    el.innerHTML = `<span>${cleanTitle}</span> <span class="task-time">${item.time || 'تسک'}</span>`;                    taskListDiv.appendChild(el);                });            }        };
+            // Render Tasks (Left Side)            if (taskItems.length === 0) {                taskListDiv.innerHTML = '<div class="empty-text">تسک فعالی وجود ندارد.</div>';            } else {                taskItems.forEach(item => {                    const cleanTitle = item.title.replace(/^📌\s*/, '');                    const el = document.createElement('a');                    el.className = 'task-item';                    el.href = 'https://tasks.google.com';                    el.target = '_blank';                    el.innerHTML = `<span>${cleanTitle}</span> <span class="task-time">${item.time || 'تسک'}</span>`;                    taskListDiv.appendChild(el);                });            }
+        };
 
         const oldScript = document.getElementById('gasScript');        if (oldScript) oldScript.remove();
 
@@ -92,7 +96,7 @@
 
     function updateTimer() {        const now = new Date();        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);                const totalDayMs = 24 * 60 * 60 * 1000;        const elapsedMs = now - startOfDay;        const remainingMs = Math.max(0, endOfDay - now);
 
-        const percent = Math.min(100, (elapsedMs / totalDayMs) * 100);        const hoursPassed = (elapsedMs / (1000 * 60 * 60)).toFixed(1);
+        const percent = Math.min(100, (elapsedMs / totalDayMs) * 100);
 
         const h = now.getHours();        const m = now.getMinutes();        const s = now.getSeconds();
 
