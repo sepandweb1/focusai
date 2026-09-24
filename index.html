@@ -1,678 +1,745 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>FocusAI | دستیار برنامه‌ریزی</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: { 50:'#eff6ff',100:'#dbeafe',200:'#bfdbfe',300:'#93c5fd',400:'#60a5fa',500:'#3b82f6',600:'#2563eb',700:'#1d4ed8',800:'#1e40af',900:'#1e3a8a' }
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ارزش زمان - مینی اپ تلگرام</title>
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border-color: #e2e8f0;
+            --box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+            --clock-bg: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+            --box-bg: #f8fafc;
+            --col-bg: #fafafa;
+            --col-border: #f1f5f9;
+            --item-bg: #ffffff;
+            --item-hover: #f1f5f9;
         }
-      }
-    }
-  </script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
-    * { font-family: 'Vazirmatn', Tahoma, system-ui, sans-serif; box-sizing: border-box; }
-    body { margin: 0; background: var(--tg-theme-bg-color, #f8fafc); color: var(--tg-theme-text-color, #1e293b); }
-    .priority-critical { border-right: 4px solid #ef4444; }
-    .priority-important { border-right: 4px solid #f59e0b; }
-    .priority-normal { border-right: 4px solid #94a3b8; }
-    .main-task-glow { box-shadow: 0 0 0 3px rgba(59,130,246,0.35); }
-    .task-done { opacity: 0.55; text-decoration: line-through; }
-    .sidebar-active { background: var(--tg-theme-button-color, #2563eb); color: var(--tg-theme-button-text-color, #fff); }
-    .nav-btn { color: var(--tg-theme-text-color, #334155); }
-    .card { background: var(--tg-theme-secondary-bg-color, #ffffff); }
-    #app { min-height: 100vh; }
-  </style>
+
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #1e293b 100%);
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
+            --box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            --clock-bg: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            --box-bg: #0f172a;
+            --col-bg: #0f172a;
+            --col-border: #1e293b;
+            --item-bg: #1e293b;
+            --item-hover: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Vazirmatn', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px 10px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            user-select: none;
+        }
+
+        .icon-btn:hover {
+            background: var(--item-hover);
+        }
+
+        .day-phase {
+            font-size: 0.8rem;
+            color: #2563eb;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            padding: 6px 12px;
+            border-radius: 99px;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .day-phase {
+            color: #60a5fa;
+            background: #1e3a8a;
+            border-color: #1e40af;
+        }
+
+        .current-date {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        /* Digital Clock Card */
+        .digital-clock-card {
+            background: var(--clock-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .digital-clock-label {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .digital-clock-time {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+            line-height: 1.1;
+        }
+
+        /* 2 Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 640px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 10px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .circular-chart {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 8;
+        }
+
+        .circle-progress {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 263.89;
+            stroke-dashoffset: 263.89;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .circle-progress.time-progress {
+            stroke: url(#timeChartGradient);
+        }
+
+        .circle-progress.energy-progress {
+            stroke: url(#energyChartGradient);
+        }
+
+        .chart-content {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .percent-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+
+        .percent-label {
+            font-size: 0.7rem;
+            color: var(--text-sub);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .main-timer {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-align: center;
+            color: #dc2626;
+            margin-bottom: 2px;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .quote-box {
+            background: var(--box-bg);
+            border-right: 4px solid #2563eb;
+            border-top: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 0 14px 14px 0;
+            margin-bottom: 20px;
+            font-size: 0.82rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 2-Column Grid */
+        .google-services-grid {
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .google-services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .service-column {
+            background: var(--col-bg);
+            border: 1px solid var(--col-border);
+            border-radius: 16px;
+            padding: 14px;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .column-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .column-link {
+            font-size: 0.7rem;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .column-link:hover {
+            text-decoration: underline;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--item-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            font-weight: 500;
+            text-decoration: none;
+            transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+
+        .task-item:hover {
+            background: var(--item-hover);
+            transform: translateY(-1px);
+        }
+
+        .task-time {
+            color: #2563eb;
+            font-weight: 700;
+            font-size: 0.72rem;
+            font-variant-numeric: tabular-nums;
+            background: #eff6ff;
+            padding: 2px 6px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        [data-theme="dark"] .task-time {
+            color: #60a5fa;
+            background: #1e3a8a;
+        }
+
+        .empty-text {
+            color: var(--text-sub);
+            font-size: 0.78rem;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .refresh-status {
+            font-size: 0.7rem;
+            color: var(--text-sub);
+            text-align: center;
+            margin-top: 14px;
+        }
+    </style>
 </head>
 <body>
-  <div id="app" class="flex flex-col md:flex-row min-h-screen">
-    <!-- Mobile top bar / Desktop sidebar -->
-    <aside id="sidebar" class="md:w-60 border-b md:border-b-0 md:border-l border-slate-200 md:flex flex-col shrink-0 card">
-      <div class="p-4 border-b border-slate-100 flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white font-bold">F</div>
-        <div>
-          <h1 class="font-bold text-base leading-tight">FocusAI</h1>
-          <p class="text-xs opacity-60" id="user-greeting">دستیار برنامه‌ریزی</p>
+
+<div class="container">
+    <div class="header-top">
+        <div class="day-phase" id="dayPhase">در حال بارگذاری...</div>
+        <div class="header-controls">
+            <div class="current-date" id="currentDate">--</div>
+            <button class="icon-btn" id="themeBtn" title="تغییر تم (روشن / تاریک)">🌙</button>
+            <button class="icon-btn" id="fullscreenBtn" title="حالت تمام‌صفحه">⛶</button>
+            <button class="icon-btn" id="refreshBtn" title="بروزرسانی زنده">🔄</button>
         </div>
-      </div>
-      <nav class="flex md:flex-col p-2 gap-1 overflow-x-auto md:overflow-y-auto flex-1" id="sidebar-nav">
-        <button data-page="dashboard" class="nav-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap sidebar-active">📅 داشبورد</button>
-        <button data-page="tasks" class="nav-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap">✅ کارها</button>
-        <button data-page="projects" class="nav-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap">📁 پروژه‌ها</button>
-        <button data-page="goals" class="nav-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap">🎯 اهداف</button>
-        <button data-page="daily-report" class="nav-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap">📝 گزارش</button>
-        <button data-page="weekly" class="nav-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap">📊 هفتگی</button>
-        <button data-page="settings" class="nav-btn flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap">⚙️ تنظیمات</button>
-      </nav>
-    </aside>
+    </div>
 
-    <main class="flex-1 overflow-y-auto">
-      <div id="page-content" class="p-4 max-w-3xl mx-auto pb-24"></div>
-    </main>
-  </div>
+    <!-- Digital Clock -->
+    <div class="digital-clock-card">
+        <div class="digital-clock-label">ساعت کنونی</div>
+        <div class="digital-clock-time" id="currentClock">--:--:--</div>
+    </div>
 
-  <div id="modal" class="fixed inset-0 bg-black/40 z-50 hidden items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto" id="modal-content" style="background: var(--tg-theme-bg-color, #fff);"></div>
-  </div>
+    <!-- 2 Circular Progress Charts Grid -->
+    <div class="charts-grid">
+        <!-- Chart 1: Time Consumed (24 Hours) -->
+        <div class="chart-card">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="timeChartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#2563eb" />
+                            <stop offset="50%" stop-color="#d97706" />
+                            <stop offset="100%" stop-color="#dc2626" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress time-progress" id="timeCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="timeProgressPercent">0%</div>
+                    <div class="percent-label">مصرف زمان امروز</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart 2: Brain Energy Level (Dynamic Circadian Rhythm) -->
+        <div class="chart-card">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="energyChartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#10b981" />
+                            <stop offset="50%" stop-color="#06b6d4" />
+                            <stop offset="100%" stop-color="#3b82f6" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress energy-progress" id="energyCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="energyPercentText">0%</div>
+                    <div class="percent-label">سطح انرژی مغز</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-timer" id="remainingTime">--:--:--</div>
+    <div class="subtitle">زمان باقیمانده تا پایان امروز</div>
+
+    <div class="quote-box" id="timeQuote">
+        «زمان دارایی تجدیدناپذیری است؛ آن را خرج نکن، سرمایه‌گذاری کن.»
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">ساعت‌های سپری شده</div>
+            <div class="stat-value" id="elapsedTime">--:--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">شاخص بار تقویم امروز</div>
+            <div class="stat-value" id="calendarLoadStatus">در حال تحلیل...</div>
+        </div>
+    </div>
+
+    <!-- 2-Column Section (Right: Calendar, Left: Tasks) -->
+    <div class="google-services-grid">
+        <!-- Right Column: Calendar -->
+        <div class="service-column">
+            <div class="column-header">
+                <div class="column-title">📅 تقویم گوگل امروز</div>
+                <a href="https://calendar.google.com" target="_blank" class="column-link">باز کردن تقویم ↗</a>
+            </div>
+            <div id="calendarList">
+                <div class="empty-text">در حال بارگذاری تقویم...</div>
+            </div>
+        </div>
+
+        <!-- Left Column: Tasks -->
+        <div class="service-column">
+            <div class="column-header">
+                <div class="column-title">📌 گوگل تسک</div>
+                <a href="https://tasks.google.com" target="_blank" class="column-link">باز کردن تسک‌ها ↗</a>
+            </div>
+            <div id="taskList">
+                <div class="empty-text">در حال بارگذاری تسک‌ها...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="refresh-status" id="refreshStatus">آخرین بروزرسانی: در حال دریافت...</div>
+</div>
 
 <script>
-/* ==================== TELEGRAM WEBAPP INIT ==================== */
-const tg = window.Telegram?.WebApp;
-if (tg) {
-  tg.ready();
-  tg.expand();
-  tg.setHeaderColor('secondary_bg_color');
-  tg.setBackgroundColor('bg_color');
-  // Apply theme
-  document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#f8fafc');
-  document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#1e293b');
-  document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color || '#2563eb');
-  document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color || '#ffffff');
-  document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color || '#ffffff');
-  // User greeting
-  const user = tg.initDataUnsafe?.user;
-  if (user) {
-    const name = user.first_name || user.username || 'کاربر';
-    document.getElementById('user-greeting').textContent = 'سلام ' + name;
-  }
-  // Main button helper
-  window.tgMainButton = {
-    show: (text, cb) => {
-      tg.MainButton.setText(text);
-      tg.MainButton.onClick(cb);
-      tg.MainButton.show();
-    },
-    hide: () => tg.MainButton.hide()
-  };
-} else {
-  window.tgMainButton = { show: ()=>{}, hide: ()=>{} };
-}
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyM7_r6et0xz-1W1pV1iTYgciLeALMchllPOCPLIFuWp7Mcwz7I7cCvuALswQaG2rZ6/exec';
 
-/* ==================== DATA LAYER ==================== */
-const DB = {
-  get(key, def = []) {
-    try {
-      const raw = localStorage.getItem('focusai_' + key);
-      return raw ? JSON.parse(raw) : def;
-    } catch { return def; }
-  },
-  set(key, val) {
-    localStorage.setItem('focusai_' + key, JSON.stringify(val));
-  },
-  uid() {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-  }
-};
+    const quotes = [
+        "«زمان دارایی تجدیدناپذیری است؛ آن را خرج نکن، سرمایه‌گذاری کن.»",
+        "«امروز، همان فردایی است که دیروز نگرانش بودی. چه کردی؟»",
+        "«تفاوت برندگان و بازندگان در نحوه مدیریت این ۲۴ ساعت مشترک است.»",
+        "«زندگی شمارش معکوس است؛ هر ثانیه که می‌گذرد، یعنی یک قدم جلوتر یا درجا زدن.»",
+        "«کارهای بزرگ با انباشت دقیقه‌های کوچک متمرکز ساخته می‌شوند.»"
+    ];
 
-const CATEGORIES = [
-  { id: 'income', label: 'درآمدزا', color: 'bg-emerald-100 text-emerald-700' },
-  { id: 'growth', label: 'رشد کسب‌وکار', color: 'bg-blue-100 text-blue-700' },
-  { id: 'projects', label: 'پروژه‌ها', color: 'bg-violet-100 text-violet-700' },
-  { id: 'learning', label: 'یادگیری', color: 'bg-amber-100 text-amber-700' },
-  { id: 'health', label: 'سلامت', color: 'bg-rose-100 text-rose-700' },
-  { id: 'personal', label: 'امور شخصی', color: 'bg-sky-100 text-sky-700' },
-  { id: 'admin', label: 'اداری', color: 'bg-slate-100 text-slate-700' },
-  { id: 'low', label: 'کم‌اهمیت', color: 'bg-gray-100 text-gray-600' }
-];
-
-const PRIORITIES = {
-  critical: { label: 'بحرانی', color: 'text-red-600 bg-red-50', score: 100 },
-  important: { label: 'مهم', color: 'text-amber-600 bg-amber-50', score: 60 },
-  normal: { label: 'عادی', color: 'text-slate-600 bg-slate-50', score: 30 }
-};
-
-function getSettings() {
-  return DB.get('settings', {
-    dayStart: '09:00', dayEnd: '17:00',
-    focusHours: ['09:00-12:00', '14:00-16:00'],
-    breakDuration: 15, lunchStart: '13:00', lunchDuration: 60
-  });
-}
-
-function scoreTask(task, goals, projects) {
-  let score = 0;
-  score += (PRIORITIES[task.priority] || PRIORITIES.normal).score;
-  score += (task.urgency || 5) * 4;
-  score += (task.importance || 5) * 4;
-  if (task.deadline) {
-    const daysLeft = (new Date(task.deadline) - new Date()) / 86400000;
-    if (daysLeft < 0) score += 50;
-    else if (daysLeft < 1) score += 40;
-    else if (daysLeft < 3) score += 25;
-    else if (daysLeft < 7) score += 10;
-  }
-  if (task.projectId) {
-    const proj = projects.find(p => p.id === task.projectId);
-    if (proj?.goalId) score += 20;
-  }
-  if (task.category === 'income' || task.category === 'growth') score += 15;
-  if (task.category === 'low') score -= 20;
-  return Math.round(score);
-}
-
-function explainPriority(task, goals, projects) {
-  const reasons = [];
-  if (task.priority === 'critical') reasons.push('اولویت بحرانی');
-  if (task.urgency >= 8) reasons.push('فوریت بسیار بالا');
-  if (task.importance >= 8) reasons.push('اهمیت بسیار بالا');
-  if (task.deadline) {
-    const days = (new Date(task.deadline) - new Date()) / 86400000;
-    if (days < 0) reasons.push('مهلت گذشته');
-    else if (days < 1) reasons.push('مهلت امروز');
-    else if (days < 3) reasons.push('مهلت نزدیک');
-  }
-  if (task.category === 'income') reasons.push('تأثیر مستقیم روی درآمد');
-  if (task.projectId) {
-    const proj = projects.find(p => p.id === task.projectId);
-    if (proj?.goalId) reasons.push('مرتبط با هدف اصلی');
-  }
-  return reasons.length ? reasons.join(' • ') : 'امتیاز ترکیبی اهمیت و فوریت';
-}
-
-function parseTime(t) { const [h,m] = t.split(':').map(Number); return h*60+m; }
-function formatTime(mins) {
-  const h = Math.floor(mins/60), m = mins%60;
-  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-}
-
-function generateDailyPlan(availableStart, availableEnd, tasks, settings) {
-  const start = parseTime(availableStart || settings.dayStart);
-  const end = parseTime(availableEnd || settings.dayEnd);
-  let current = start;
-  const plan = [];
-  const goals = DB.get('goals'), projects = DB.get('projects');
-  const sorted = [...tasks].filter(t => t.status !== 'done')
-    .sort((a,b) => scoreTask(b,goals,projects) - scoreTask(a,goals,projects));
-  const lunchStart = parseTime(settings.lunchStart);
-  const lunchEnd = lunchStart + (settings.lunchDuration || 60);
-
-  for (const task of sorted) {
-    const duration = task.estimatedMinutes || 60;
-    if (current < lunchStart && current + duration > lunchStart) {
-      plan.push({ type:'break', title:'ناهار', start:formatTime(lunchStart), end:formatTime(lunchEnd), duration:settings.lunchDuration });
-      current = lunchEnd;
+    // Telegram Web App Theme Integration
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
     }
-    if (current + duration > end) break;
-    plan.push({
-      type:'task', taskId:task.id, title:task.title,
-      start:formatTime(current), end:formatTime(current+duration),
-      duration, priority:task.priority, category:task.category
+
+    // Theme Management (Telegram Auto-Sync + Manual Toggle)
+    const themeBtn = document.getElementById('themeBtn');
+    let currentTheme = localStorage.getItem('theme') || (tg && tg.colorScheme ? tg.colorScheme : 'light');
+    
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('theme', theme);
+    }
+    applyTheme(currentTheme);
+
+    themeBtn.addEventListener('click', () => {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        applyTheme(currentTheme);
     });
-    current += duration;
-    if (current + 15 <= end && duration >= 90) {
-      plan.push({ type:'break', title:'استراحت کوتاه', start:formatTime(current), end:formatTime(current+15), duration:15 });
-      current += 15;
+
+    // Fullscreen Toggle
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => console.log(err));
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    });
+
+    // Refresh Button & Data Fetching with Timeout Safety
+    const refreshBtn = document.getElementById('refreshBtn');
+    refreshBtn.addEventListener('click', () => {
+        loadTasksFromGoogle();
+    });
+
+    function loadTasksFromGoogle() {
+        const calendarListDiv = document.getElementById('calendarList');
+        const taskListDiv = document.getElementById('taskList');
+        const refreshStatus = document.getElementById('refreshStatus');
+        const callbackName = 'handleGoogleTasksResponse';
+
+        refreshBtn.style.transform = 'rotate(360deg)';
+        refreshBtn.style.transition = 'transform 0.5s ease';
+        setTimeout(() => refreshBtn.style.transform = 'none', 500);
+
+        const timeoutId = setTimeout(() => {
+            if (calendarListDiv.innerHTML.includes('بارگذاری')) {
+                calendarListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">عدم پاسخ‌گویی سرور گوگل (روی 🔄 کلیک کنید)</div>';
+                taskListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">برای بارگذاری مجدد تلاش کنید</div>';
+                refreshStatus.textContent = 'خطا در ارتباط یا نیاز به تایید دسترسی در گوگل.';
+            }
+        }, 8000);
+
+        window[callbackName] = function(items) {
+            clearTimeout(timeoutId);
+            calendarListDiv.innerHTML = '';
+            taskListDiv.innerHTML = '';
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            refreshStatus.textContent = `آخرین بروزرسانی: ساعت ${timeStr} (بروزرسانی خودکار هر ۵ دقیقه)`;
+
+            if (!items || items.length === 0) {
+                calendarListDiv.innerHTML = '<div class="empty-text">برنامه‌ای در تقویم نیست.</div>';
+                taskListDiv.innerHTML = '<div class="empty-text">تسکی ثبت نشده است.</div>';
+                document.getElementById('calendarLoadStatus').textContent = 'روز آزاد و خلوت 🍃';
+                return;
+            }
+
+            let calendarItems = [];
+            let taskItems = [];
+
+            if (Array.isArray(items)) {
+                calendarItems = items.filter(item => !item.title.startsWith('📌'));
+                taskItems = items.filter(item => item.title.startsWith('📌'));
+            } else if (items && typeof items === 'object') {
+                calendarItems = items.events || [];
+                taskItems = items.tasks || [];
+            }
+
+            const eventCount = calendarItems.length;
+            let loadText = "تقویم متعادل ⚖️";
+            if (eventCount === 0) loadText = "روز آزاد و خلوت 🍃";
+            else if (eventCount >= 4) loadText = "روز فشرده و پرکار 🔥";
+            document.getElementById('calendarLoadStatus').textContent = loadText;
+
+            // Render Calendar Events (Right Side)
+            if (calendarItems.length === 0) {
+                calendarListDiv.innerHTML = '<div class="empty-text">رویدادی برای امروز ثبت نشده است.</div>';
+            } else {
+                calendarItems.forEach(item => {
+                    const el = document.createElement('a');
+                    el.className = 'task-item';
+                    el.href = 'https://calendar.google.com';
+                    el.target = '_blank';
+                    el.innerHTML = `<span>${item.title}</span> <span class="task-time">${item.time || ''}</span>`;
+                    calendarListDiv.appendChild(el);
+                });
+            }
+
+            // Render Tasks (Left Side)
+            if (taskItems.length === 0) {
+                taskListDiv.innerHTML = '<div class="empty-text">تسک فعالی وجود ندارد.</div>';
+            } else {
+                taskItems.forEach(item => {
+                    const cleanTitle = item.title.replace(/^📌\s*/, '');
+                    const el = document.createElement('a');
+                    el.className = 'task-item';
+                    el.href = 'https://tasks.google.com';
+                    el.target = '_blank';
+                    el.innerHTML = `<span>${cleanTitle}</span> <span class="task-time">${item.time || 'تسک'}</span>`;
+                    taskListDiv.appendChild(el);
+                });
+            }
+        };
+
+        const oldScript = document.getElementById('gasScript');
+        if (oldScript) oldScript.remove();
+
+        const script = document.createElement('script');
+        script.id = 'gasScript';
+        script.src = `${GAS_URL}?callback=${callbackName}`;
+        script.onerror = function() {
+            clearTimeout(timeoutId);
+            calendarListDiv.innerHTML = '<div class="empty-text" style="color:#dc2626;">خطا در دریافت اطلاعات</div>';
+            taskListDiv.innerHTML = '<div class="empty-text" style="color:#dc2626;">خطا در دریافت اطلاعات</div>';
+            refreshStatus.textContent = 'خطا در ارتباط با گوگل اسکریپت.';
+        };
+        document.body.appendChild(script);
     }
-  }
-  return plan;
-}
 
-function fmtDate(d = new Date()) {
-  return new Intl.DateTimeFormat('fa-IR', { weekday:'long', year:'numeric', month:'long', day:'numeric' }).format(d);
-}
-function fmtShort(d) {
-  if (!d) return '—';
-  return new Intl.DateTimeFormat('fa-IR', { month:'short', day:'numeric' }).format(new Date(d));
-}
-function todayKey() { return new Date().toISOString().slice(0,10); }
+    function updateQuote() {
+        const hour = new Date().getHours();
+        const quoteIndex = Math.floor(hour / 5) % quotes.length;
+        document.getElementById('timeQuote').textContent = quotes[quoteIndex];
+    }
 
-function openModal(html) {
-  document.getElementById('modal-content').innerHTML = html;
-  document.getElementById('modal').classList.remove('hidden');
-  document.getElementById('modal').classList.add('flex');
-  if (tg) tg.BackButton.show();
-}
-function closeModal() {
-  document.getElementById('modal').classList.add('hidden');
-  document.getElementById('modal').classList.remove('flex');
-  if (tg) tg.BackButton.hide();
-}
+    function updateTimer() {
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+        
+        const totalDayMs = 24 * 60 * 60 * 1000;
+        const elapsedMs = now - startOfDay;
+        const remainingMs = Math.max(0, endOfDay - now);
 
-/* ==================== PAGES ==================== */
-function renderDashboard() {
-  const tasks = DB.get('tasks'), goals = DB.get('goals'), projects = DB.get('projects');
-  const settings = getSettings();
-  const today = todayKey();
-  const active = tasks.filter(t => t.status !== 'done');
-  const scored = active.map(t => ({
-    ...t, _score: scoreTask(t, goals, projects), _reason: explainPriority(t, goals, projects)
-  })).sort((a,b) => b._score - a._score);
-  const mainTask = scored[0] || null;
-  const next3 = scored.slice(1,4);
-  const overdue = active.filter(t => t.deadline && new Date(t.deadline) < new Date(today));
-  const doneToday = tasks.filter(t => t.status === 'done' && t.completedAt?.startsWith(today)).length;
-  const totalToday = active.length + doneToday;
-  const progress = totalToday ? Math.round((doneToday/totalToday)*100) : 0;
+        const percent = Math.min(100, (elapsedMs / totalDayMs) * 100);
+        const hoursPassed = (elapsedMs / (1000 * 60 * 60)).toFixed(1);
 
-  let plan = DB.get('dailyPlan_' + today, null);
-  if (!plan) {
-    plan = generateDailyPlan(settings.dayStart, settings.dayEnd, active, settings);
-    DB.set('dailyPlan_' + today, plan);
-  }
+        const h = now.getHours();
+        const m = now.getMinutes();
+        const s = now.getSeconds();
 
-  return `
-    <div class="mb-5">
-      <h2 class="text-xl font-bold">${fmtDate()}</h2>
-      <p class="text-sm opacity-60 mt-0.5">برنامه هوشمند امروز</p>
-    </div>
-    ${mainTask ? `
-    <div class="bg-gradient-to-l from-blue-600 to-violet-600 rounded-2xl p-5 text-white mb-5 main-task-glow">
-      <div class="text-xs opacity-80 mb-1">اگر امروز فقط یک کار انجام می‌دهی، این کار را انجام بده</div>
-      <h3 class="text-lg font-bold mb-1">${mainTask.title}</h3>
-      <p class="text-xs opacity-90 mb-3">${mainTask._reason}</p>
-      <button onclick="completeTask('${mainTask.id}')" class="bg-white text-blue-700 px-4 py-2 rounded-lg font-medium text-sm">✓ انجام شد</button>
-    </div>` : `
-    <div class="card rounded-2xl p-5 text-center mb-5 border border-slate-200">
-      <p class="opacity-60 text-sm">هیچ کار فعالی وجود ندارد</p>
-      <button onclick="showAddTask()" class="mt-3 text-sm text-blue-600 font-medium">+ افزودن کار</button>
-    </div>`}
+        const currHours = String(h).padStart(2, '0');
+        const currMinutes = String(m).padStart(2, '0');
+        const currSeconds = String(s).padStart(2, '0');
 
-    <div class="grid grid-cols-1 gap-4">
-      <div class="card rounded-2xl border border-slate-200 p-4">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="font-semibold text-sm">برنامه امروز</h3>
-          <button onclick="regeneratePlan()" class="text-xs text-blue-600">بازسازی</button>
-        </div>
-        <div class="space-y-2">
-          ${plan.length ? plan.map(item => `
-            <div class="flex items-center gap-2 p-2.5 rounded-xl ${item.type==='break'?'bg-slate-50':'border border-slate-100'}">
-              <div class="text-xs font-mono opacity-50 w-20 shrink-0">${item.start}–${item.end}</div>
-              <div class="flex-1 text-sm ${item.type==='break'?'opacity-50':''}">${item.title}</div>
-              ${item.type==='task' ? `<button onclick="completeTask('${item.taskId}')" class="text-xs px-2 py-1 rounded bg-emerald-50 text-emerald-600">انجام</button>` : ''}
-            </div>`).join('') : '<p class="text-xs opacity-40">برنامه‌ای نیست</p>'}
-        </div>
-      </div>
+        const remHours = String(Math.floor((remainingMs / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+        const remMinutes = String(Math.floor((remainingMs / (1000 * 60)) % 60)).padStart(2, '0');
+        const remSeconds = String(Math.floor((remainingMs / 1000) % 60)).padStart(2, '0');
 
-      <div class="card rounded-2xl border border-slate-200 p-4">
-        <h3 class="font-semibold text-sm mb-3">۳ کار مهم بعدی</h3>
-        <div class="space-y-2">
-          ${next3.length ? next3.map(t => `
-            <div class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-100 priority-${t.priority}">
-              <div class="flex-1">
-                <div class="text-sm font-medium">${t.title}</div>
-                <div class="text-xs opacity-40 mt-0.5">${t._reason}</div>
-              </div>
-              <button onclick="completeTask('${t.id}')" class="text-xs px-2 py-1 rounded bg-slate-100">✓</button>
-            </div>`).join('') : '<p class="text-xs opacity-40">—</p>'}
-        </div>
-      </div>
+        const elHours = String(Math.floor((elapsedMs / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+        const elMinutes = String(Math.floor((elapsedMs / (1000 * 60)) % 60)).padStart(2, '0');
 
-      <div class="grid grid-cols-2 gap-3">
-        <div class="card rounded-2xl border border-slate-200 p-4 text-center">
-          <div class="text-2xl font-bold text-blue-600">${progress}%</div>
-          <div class="text-xs opacity-50 mt-1">پیشرفت امروز</div>
-        </div>
-        <div class="card rounded-2xl border border-slate-200 p-4 text-center">
-          <div class="text-2xl font-bold text-red-500">${overdue.length}</div>
-          <div class="text-xs opacity-50 mt-1">عقب‌افتاده</div>
-        </div>
-      </div>
+        let phaseText = "استراحت و آرامش";
+        if (h >= 6 && h < 12) phaseText = "صبح؛ فاز تمرکز و خلق";
+        else if (h >= 12 && h < 17) phaseText = "ظهر؛ فاز اجرای عمیق";
+        else if (h >= 17 && h < 22) phaseText = "عصر؛ فاز تثبیت و بازبینی";
 
-      <button onclick="showAddTask()" class="w-full py-3 rounded-xl text-white font-medium text-sm" style="background:var(--tg-theme-button-color,#2563eb);color:var(--tg-theme-button-text-color,#fff)">
-        + افزودن کار جدید
-      </button>
-    </div>
-  `;
-}
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', calendar: 'persian' };
+        const dateStr = new Intl.DateTimeFormat('fa-IR', options).format(now);
 
-function renderTasks() {
-  const tasks = DB.get('tasks'), projects = DB.get('projects');
-  const filter = window._taskFilter || 'all';
-  const filtered = tasks.filter(t => {
-    if (filter==='all') return true;
-    if (filter==='todo') return t.status==='todo';
-    if (filter==='done') return t.status==='done';
-    if (filter==='overdue') return t.status!=='done' && t.deadline && new Date(t.deadline)<new Date();
-    return true;
-  });
-  return `
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-bold">کارها</h2>
-      <button onclick="showAddTask()" class="px-3 py-1.5 rounded-lg text-sm font-medium text-white" style="background:var(--tg-theme-button-color,#2563eb)">+ جدید</button>
-    </div>
-    <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
-      ${['all','todo','done','overdue'].map(f => `
-        <button onclick="window._taskFilter='${f}';navigate('tasks')" class="px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${filter===f?'text-white':'bg-slate-100'}" style="${filter===f?'background:var(--tg-theme-button-color,#2563eb)':''}">
-          ${{all:'همه',todo:'انجام‌نشده',done:'انجام‌شده',overdue:'عقب‌افتاده'}[f]}
-        </button>`).join('')}
-    </div>
-    <div class="space-y-2">
-      ${filtered.length ? filtered.map(t => {
-        const proj = projects.find(p=>p.id===t.projectId);
-        const cat = CATEGORIES.find(c=>c.id===t.category);
-        return `
-          <div class="card rounded-xl border border-slate-200 p-3 flex items-start gap-3 ${t.status==='done'?'task-done':''} priority-${t.priority}">
-            <button onclick="toggleTask('${t.id}')" class="mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${t.status==='done'?'bg-emerald-500 border-emerald-500 text-white text-xs':'border-slate-300'}">${t.status==='done'?'✓':''}</button>
-            <div class="flex-1 min-w-0">
-              <div class="font-medium text-sm">${t.title}</div>
-              <div class="flex flex-wrap gap-1.5 mt-1 text-xs">
-                <span class="px-1.5 py-0.5 rounded ${PRIORITIES[t.priority]?.color||''}">${PRIORITIES[t.priority]?.label||'عادی'}</span>
-                ${cat?`<span class="px-1.5 py-0.5 rounded ${cat.color}">${cat.label}</span>`:''}
-                ${t.deadline?`<span class="opacity-40">مهلت: ${fmtShort(t.deadline)}</span>`:''}
-              </div>
-            </div>
-            <button onclick="editTask('${t.id}')" class="text-xs opacity-40">ویرایش</button>
-          </div>`;
-      }).join('') : '<p class="text-center opacity-40 py-8 text-sm">هیچ کاری یافت نشد</p>'}
-    </div>
-  `;
-}
+        // Chart 1: Day Progress (24h)
+        const circumference = 263.89;
+        const timeOffset = circumference - (percent / 100) * circumference;
+        document.getElementById('timeCircleProgress').style.strokeDashoffset = timeOffset;
+        document.getElementById('timeProgressPercent').textContent = `${percent.toFixed(1)}%`;
 
-function renderProjects() {
-  const projects = DB.get('projects'), tasks = DB.get('tasks'), goals = DB.get('goals');
-  return `
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-bold">پروژه‌ها</h2>
-      <button onclick="showAddProject()" class="px-3 py-1.5 rounded-lg text-sm font-medium text-white" style="background:var(--tg-theme-button-color,#2563eb)">+ جدید</button>
-    </div>
-    <div class="space-y-3">
-      ${projects.length ? projects.map(p => {
-        const pTasks = tasks.filter(t=>t.projectId===p.id);
-        const done = pTasks.filter(t=>t.status==='done').length;
-        const progress = pTasks.length ? Math.round(done/pTasks.length*100) : 0;
-        const goal = goals.find(g=>g.id===p.goalId);
-        return `
-          <div class="card rounded-2xl border border-slate-200 p-4">
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="font-semibold">${p.name}</h3>
-              <span class="text-xs px-2 py-0.5 rounded-full ${p.status==='active'?'bg-emerald-50 text-emerald-600':'bg-slate-100'}">${p.status==='active'?'فعال':'تمام'}</span>
-            </div>
-            ${goal?`<p class="text-xs opacity-40 mb-2">هدف: ${goal.title}</p>`:''}
-            <div class="w-full bg-slate-100 rounded-full h-1.5 mb-1.5"><div class="bg-violet-500 h-1.5 rounded-full" style="width:${progress}%"></div></div>
-            <div class="text-xs opacity-50">${done}/${pTasks.length} کار • ${progress}%</div>
-          </div>`;
-      }).join('') : '<p class="text-center opacity-40 py-8 text-sm">پروژه‌ای نیست</p>'}
-    </div>
-  `;
-}
+        // Chart 2: Brain Energy Level (Circadian Rhythm Simulation)
+        let energyPercent = 50;
+        let energyStatus = "حالت عادی";
 
-function renderGoals() {
-  const goals = DB.get('goals'), projects = DB.get('projects');
-  return `
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-bold">اهداف</h2>
-      <button onclick="showAddGoal()" class="px-3 py-1.5 rounded-lg text-sm font-medium text-white" style="background:var(--tg-theme-button-color,#2563eb)">+ جدید</button>
-    </div>
-    <div class="space-y-3">
-      ${goals.length ? goals.map(g => {
-        const gProjects = projects.filter(p=>p.goalId===g.id);
-        return `
-          <div class="card rounded-2xl border border-slate-200 p-4">
-            <div class="flex justify-between items-start">
-              <div><h3 class="font-semibold">${g.title}</h3><p class="text-xs opacity-50 mt-1">${g.reason||''}</p></div>
-              <div class="text-xl font-bold text-blue-600">${g.progress||0}%</div>
-            </div>
-            <div class="w-full bg-slate-100 rounded-full h-2 mt-3"><div class="bg-blue-500 h-2 rounded-full" style="width:${g.progress||0}%"></div></div>
-            <div class="flex justify-between mt-2 text-xs opacity-40">
-              <span>${gProjects.length} پروژه</span>
-              ${g.deadline?`<span>مهلت: ${fmtShort(g.deadline)}</span>`:''}
-            </div>
-          </div>`;
-      }).join('') : '<p class="text-center opacity-40 py-8 text-sm">هدفی ثبت نشده</p>'}
-    </div>
-  `;
-}
+        if (h >= 6 && h < 12) {
+            energyPercent = 60 + ((h - 6) / 6) * 40;
+            energyStatus = "اوج تمرکز صبحگاهی 🚀";
+        } else if (h >= 12 && h < 15) {
+            energyPercent = 65;
+            energyStatus = "افت انرژی بعد از ظهر ☕";
+        } else if (h >= 15 && h < 19) {
+            energyPercent = 75;
+            energyStatus = "موج دوم هوشیاری ⚡";
+        } else if (h >= 19 && h < 23) {
+            energyPercent = 45;
+            energyStatus = "فاز استراحت و آرامش 🌙";
+        } else {
+            energyPercent = 20;
+            energyStatus = "زمان بازیابی مغز 🛌";
+        }
 
-function renderDailyReport() {
-  const reports = DB.get('dailyReports'), today = todayKey();
-  const todayReport = reports.find(r => r.date === today);
-  return `
-    <div class="mb-4"><h2 class="text-xl font-bold">گزارش روزانه</h2></div>
-    ${todayReport ? `
-      <div class="card rounded-2xl border border-slate-200 p-4 mb-4 text-sm space-y-2">
-        <p><strong>مهم‌ترین کار:</strong> ${todayReport.mainDone||'—'}</p>
-        <p><strong>انجام‌نشده:</strong> ${todayReport.notDone||'—'}</p>
-        <p><strong>دلیل:</strong> ${todayReport.why||'—'}</p>
-        <p>انرژی: ${todayReport.energy}/10 • تمرکز: ${todayReport.focus}/10</p>
-      </div>` : `
-      <div class="card rounded-2xl border border-slate-200 p-4 mb-4 space-y-3">
-        <input id="dr-main" placeholder="مهم‌ترین کار امروز؟" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-        <input id="dr-notdone" placeholder="چه کارهایی انجام نشد؟" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-        <input id="dr-why" placeholder="چرا؟" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-        <div class="grid grid-cols-2 gap-3">
-          <input id="dr-energy" type="number" min="1" max="10" value="7" placeholder="انرژی" class="border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-          <input id="dr-focus" type="number" min="1" max="10" value="7" placeholder="تمرکز" class="border border-slate-200 rounded-lg px-3 py-2 text-sm" />
-        </div>
-        <button onclick="saveDailyReport()" class="w-full py-2.5 rounded-lg text-sm font-medium text-white" style="background:var(--tg-theme-button-color,#2563eb)">ذخیره گزارش</button>
-      </div>`}
-  `;
-}
+        const energyOffset = circumference - (energyPercent / 100) * circumference;
+        document.getElementById('energyCircleProgress').style.strokeDashoffset = energyOffset;
+        document.getElementById('energyPercentText').textContent = `${Math.round(energyPercent)}%`;
+        document.getElementById('energyStatusText').textContent = energyStatus;
 
-function renderWeekly() {
-  const tasks = DB.get('tasks'), projects = DB.get('projects');
-  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate()-7);
-  const weekTasks = tasks.filter(t => t.completedAt && new Date(t.completedAt) >= weekAgo);
-  const doneCount = weekTasks.length;
-  const overdueCount = tasks.filter(t => t.status!=='done' && t.deadline && new Date(t.deadline)<new Date()).length;
-  const importantMins = weekTasks.filter(t=>t.priority==='critical'||t.priority==='important').reduce((s,t)=>s+(t.estimatedMinutes||60),0);
-  const lowMins = weekTasks.filter(t=>t.category==='low'||t.priority==='normal').reduce((s,t)=>s+(t.estimatedMinutes||60),0);
-  const suggestions = [];
-  if (lowMins > importantMins) suggestions.push('بخش زیادی از زمان صرف کارهای کم‌اهمیت شده');
-  if (overdueCount > 3) suggestions.push('تعداد کارهای عقب‌افتاده بالاست');
-  return `
-    <div class="mb-4"><h2 class="text-xl font-bold">گزارش هفتگی</h2></div>
-    <div class="grid grid-cols-2 gap-3 mb-4">
-      <div class="card rounded-2xl border p-3 text-center"><div class="text-xl font-bold text-emerald-600">${doneCount}</div><div class="text-xs opacity-50">انجام‌شده</div></div>
-      <div class="card rounded-2xl border p-3 text-center"><div class="text-xl font-bold text-red-500">${overdueCount}</div><div class="text-xs opacity-50">عقب‌افتاده</div></div>
-      <div class="card rounded-2xl border p-3 text-center"><div class="text-xl font-bold text-blue-600">${Math.round(importantMins/60)}س</div><div class="text-xs opacity-50">کارهای مهم</div></div>
-      <div class="card rounded-2xl border p-3 text-center"><div class="text-xl font-bold opacity-50">${Math.round(lowMins/60)}س</div><div class="text-xs opacity-50">کم‌اهمیت</div></div>
-    </div>
-    ${suggestions.length ? `<div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-900 space-y-1">${suggestions.map(s=>`<p>• ${s}</p>`).join('')}</div>` : '<div class="bg-emerald-50 rounded-2xl p-4 text-sm text-emerald-800">عملکرد خوبی داشته‌اید!</div>'}
-  `;
-}
+        document.getElementById('currentClock').textContent = `${currHours}:${currMinutes}:${currSeconds}`;
+        document.getElementById('remainingTime').textContent = `${remHours}:${remMinutes}:${remSeconds}`;
+        document.getElementById('elapsedTime').textContent = `${elHours}:${elMinutes}`;
+        document.getElementById('dayPhase').textContent = phaseText;
+        document.getElementById('currentDate').textContent = dateStr;
+    }
 
-function renderSettings() {
-  const s = getSettings();
-  return `
-    <div class="mb-4"><h2 class="text-xl font-bold">تنظیمات</h2></div>
-    <div class="card rounded-2xl border border-slate-200 p-4 space-y-3 max-w-sm">
-      <div><label class="text-xs opacity-60">شروع روز</label><input id="set-start" type="time" value="${s.dayStart}" class="mt-1 w-full border rounded-lg px-3 py-2 text-sm" /></div>
-      <div><label class="text-xs opacity-60">پایان روز</label><input id="set-end" type="time" value="${s.dayEnd}" class="mt-1 w-full border rounded-lg px-3 py-2 text-sm" /></div>
-      <div><label class="text-xs opacity-60">شروع ناهار</label><input id="set-lunch" type="time" value="${s.lunchStart}" class="mt-1 w-full border rounded-lg px-3 py-2 text-sm" /></div>
-      <button onclick="saveSettings()" class="w-full py-2.5 rounded-lg text-sm font-medium text-white" style="background:var(--tg-theme-button-color,#2563eb)">ذخیره</button>
-      <button onclick="if(confirm('همه داده‌ها پاک شود؟')){localStorage.clear();location.reload()}" class="w-full py-2 text-red-600 text-sm border border-red-200 rounded-lg">پاک کردن داده‌ها</button>
-    </div>
-  `;
-}
+    updateQuote();
+    setInterval(updateTimer, 1000);
+    updateTimer();
+    loadTasksFromGoogle();
 
-/* ==================== ACTIONS ==================== */
-function showAddTask(editId=null) {
-  const tasks=DB.get('tasks'), projects=DB.get('projects');
-  const t = editId ? tasks.find(x=>x.id===editId) : {};
-  openModal(`
-    <div class="p-5">
-      <h3 class="text-base font-bold mb-3">${editId?'ویرایش کار':'کار جدید'}</h3>
-      <div class="space-y-2.5">
-        <input id="t-title" placeholder="عنوان کار" value="${t.title||''}" class="w-full border rounded-lg px-3 py-2 text-sm" />
-        <textarea id="t-desc" placeholder="توضیحات" class="w-full border rounded-lg px-3 py-2 text-sm h-16">${t.description||''}</textarea>
-        <div class="grid grid-cols-2 gap-2">
-          <select id="t-priority" class="border rounded-lg px-3 py-2 text-sm">
-            <option value="normal" ${t.priority==='normal'?'selected':''}>عادی</option>
-            <option value="important" ${t.priority==='important'?'selected':''}>مهم</option>
-            <option value="critical" ${t.priority==='critical'?'selected':''}>بحرانی</option>
-          </select>
-          <select id="t-category" class="border rounded-lg px-3 py-2 text-sm">
-            ${CATEGORIES.map(c=>`<option value="${c.id}" ${t.category===c.id?'selected':''}>${c.label}</option>`).join('')}
-          </select>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <input id="t-imp" type="number" min="1" max="10" value="${t.importance||5}" placeholder="اهمیت" class="border rounded-lg px-3 py-2 text-sm" />
-          <input id="t-urg" type="number" min="1" max="10" value="${t.urgency||5}" placeholder="فوریت" class="border rounded-lg px-3 py-2 text-sm" />
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <input id="t-est" type="number" value="${t.estimatedMinutes||60}" placeholder="دقیقه" class="border rounded-lg px-3 py-2 text-sm" />
-          <input id="t-deadline" type="date" value="${t.deadline||''}" class="border rounded-lg px-3 py-2 text-sm" />
-        </div>
-        <select id="t-project" class="w-full border rounded-lg px-3 py-2 text-sm">
-          <option value="">بدون پروژه</option>
-          ${projects.map(p=>`<option value="${p.id}" ${t.projectId===p.id?'selected':''}>${p.name}</option>`).join('')}
-        </select>
-        <div class="flex gap-2 pt-1">
-          <button onclick="saveTask('${editId||''}')" class="flex-1 py-2.5 rounded-lg text-sm font-medium text-white" style="background:var(--tg-theme-button-color,#2563eb)">ذخیره</button>
-          <button onclick="closeModal()" class="px-4 py-2.5 border rounded-lg text-sm">انصراف</button>
-        </div>
-      </div>
-    </div>`);
-}
-
-function saveTask(editId) {
-  const tasks = DB.get('tasks');
-  const data = {
-    title: document.getElementById('t-title').value.trim(),
-    description: document.getElementById('t-desc').value.trim(),
-    priority: document.getElementById('t-priority').value,
-    category: document.getElementById('t-category').value,
-    importance: +document.getElementById('t-imp').value,
-    urgency: +document.getElementById('t-urg').value,
-    estimatedMinutes: +document.getElementById('t-est').value,
-    deadline: document.getElementById('t-deadline').value || null,
-    projectId: document.getElementById('t-project').value || null,
-    status: 'todo'
-  };
-  if (!data.title) return alert('عنوان الزامی است');
-  if (editId) {
-    const i = tasks.findIndex(t=>t.id===editId);
-    if (i>=0) tasks[i] = {...tasks[i], ...data};
-  } else {
-    tasks.push({id:DB.uid(), ...data, createdAt:new Date().toISOString()});
-  }
-  DB.set('tasks', tasks);
-  localStorage.removeItem('focusai_dailyPlan_'+todayKey());
-  closeModal();
-  navigate(currentPage);
-  if (tg) tg.HapticFeedback?.notificationOccurred('success');
-}
-
-function showAddProject() {
-  const goals = DB.get('goals');
-  openModal(`
-    <div class="p-5">
-      <h3 class="text-base font-bold mb-3">پروژه جدید</h3>
-      <div class="space-y-2.5">
-        <input id="p-name" placeholder="نام پروژه" class="w-full border rounded-lg px-3 py-2 text-sm" />
-        <select id="p-goal" class="w-full border rounded-lg px-3 py-2 text-sm">
-          <option value="">بدون هدف</option>
-          ${goals.map(g=>`<option value="${g.id}">${g.title}</option>`).join('')}
-        </select>
-        <input id="p-deadline" type="date" class="w-full border rounded-lg px-3 py-2 text-sm" />
-        <div class="flex gap-2 pt-1">
-          <button onclick="saveProject()" class="flex-1 py-2.5 rounded-lg text-sm font-medium text-white" style="background:var(--tg-theme-button-color,#2563eb)">ذخیره</button>
-          <button onclick="closeModal()" class="px-4 py-2.5 border rounded-lg text-sm">انصراف</button>
-        </div>
-      </div>
-    </div>`);
-}
-
-function saveProject() {
-  const name = document.getElementById('p-name').value.trim();
-  if (!name) return alert('نام الزامی است');
-  const projects = DB.get('projects');
-  projects.push({id:DB.uid(), name, goalId:document.getElementById('p-goal').value||null, deadline:document.getElementById('p-deadline').value||null, status:'active', createdAt:new Date().toISOString()});
-  DB.set('projects', projects);
-  closeModal(); navigate('projects');
-}
-
-function showAddGoal() {
-  openModal(`
-    <div class="p-5">
-      <h3 class="text-base font-bold mb-3">هدف جدید</h3>
-      <div class="space-y-2.5">
-        <input id="g-title" placeholder="عنوان هدف" class="w-full border rounded-lg px-3 py-2 text-sm" />
-        <textarea id="g-reason" placeholder="چرا مهم است؟" class="w-full border rounded-lg px-3 py-2 text-sm h-16"></textarea>
-        <input id="g-deadline" type="date" class="w-full border rounded-lg px-3 py-2 text-sm" />
-        <div class="flex gap-2 pt-1">
-          <button onclick="saveGoal()" class="flex-1 py-2.5 rounded-lg text-sm font-medium text-white" style="background:var(--tg-theme-button-color,#2563eb)">ذخیره</button>
-          <button onclick="closeModal()" class="px-4 py-2.5 border rounded-lg text-sm">انصراف</button>
-        </div>
-      </div>
-    </div>`);
-}
-
-function saveGoal() {
-  const title = document.getElementById('g-title').value.trim();
-  if (!title) return alert('عنوان الزامی است');
-  const goals = DB.get('goals');
-  goals.push({id:DB.uid(), title, reason:document.getElementById('g-reason').value.trim(), deadline:document.getElementById('g-deadline').value||null, progress:0, createdAt:new Date().toISOString()});
-  DB.set('goals', goals);
-  closeModal(); navigate('goals');
-}
-
-function completeTask(id) {
-  const tasks = DB.get('tasks');
-  const t = tasks.find(x=>x.id===id);
-  if (t) { t.status='done'; t.completedAt=new Date().toISOString(); DB.set('tasks',tasks); localStorage.removeItem('focusai_dailyPlan_'+todayKey()); navigate(currentPage); if(tg) tg.HapticFeedback?.notificationOccurred('success'); }
-}
-function toggleTask(id) {
-  const tasks = DB.get('tasks');
-  const t = tasks.find(x=>x.id===id);
-  if (t) {
-    if (t.status==='done') { t.status='todo'; delete t.completedAt; }
-    else { t.status='done'; t.completedAt=new Date().toISOString(); }
-    DB.set('tasks',tasks); localStorage.removeItem('focusai_dailyPlan_'+todayKey()); navigate(currentPage);
-  }
-}
-function editTask(id) { showAddTask(id); }
-function regeneratePlan() { localStorage.removeItem('focusai_dailyPlan_'+todayKey()); navigate('dashboard'); }
-function saveDailyReport() {
-  const reports = DB.get('dailyReports');
-  const today = todayKey();
-  const data = { date:today, mainDone:document.getElementById('dr-main').value, notDone:document.getElementById('dr-notdone').value, why:document.getElementById('dr-why').value, energy:+document.getElementById('dr-energy').value, focus:+document.getElementById('dr-focus').value };
-  const i = reports.findIndex(r=>r.date===today);
-  if (i>=0) reports[i]=data; else reports.push(data);
-  DB.set('dailyReports', reports); navigate('daily-report');
-}
-function saveSettings() {
-  DB.set('settings', { dayStart:document.getElementById('set-start').value, dayEnd:document.getElementById('set-end').value, lunchStart:document.getElementById('set-lunch').value, lunchDuration:getSettings().lunchDuration, focusHours:getSettings().focusHours, breakDuration:15 });
-  localStorage.removeItem('focusai_dailyPlan_'+todayKey());
-  alert('ذخیره شد'); navigate('settings');
-}
-
-/* ==================== NAVIGATION ==================== */
-let currentPage = 'dashboard';
-const pages = { dashboard:renderDashboard, tasks:renderTasks, projects:renderProjects, goals:renderGoals, 'daily-report':renderDailyReport, weekly:renderWeekly, settings:renderSettings };
-
-function navigate(page) {
-  currentPage = page;
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    const active = btn.dataset.page === page;
-    btn.classList.toggle('sidebar-active', active);
-  });
-  document.getElementById('page-content').innerHTML = (pages[page]||renderDashboard)();
-  window.scrollTo(0,0);
-}
-
-document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.page)));
-document.getElementById('modal').addEventListener('click', e => { if (e.target.id==='modal') closeModal(); });
-if (tg) {
-  tg.BackButton.onClick(() => closeModal());
-}
-
-// Seed data
-if (DB.get('tasks').length===0 && DB.get('goals').length===0) {
-  const g1={id:DB.uid(),title:'راه‌اندازی کسب‌وکار آنلاین',reason:'استقلال مالی',deadline:'2026-12-31',progress:20,createdAt:new Date().toISOString()};
-  const g2={id:DB.uid(),title:'یادگیری مهارت جدید',reason:'رشد شخصی',deadline:'2026-06-30',progress:10,createdAt:new Date().toISOString()};
-  DB.set('goals',[g1,g2]);
-  const p1={id:DB.uid(),name:'طراحی وب‌سایت فروشگاهی',goalId:g1.id,status:'active',deadline:'2026-04-30',createdAt:new Date().toISOString()};
-  const p2={id:DB.uid(),name:'دوره React پیشرفته',goalId:g2.id,status:'active',deadline:'2026-03-15',createdAt:new Date().toISOString()};
-  DB.set('projects',[p1,p2]);
-  DB.set('tasks',[
-    {id:DB.uid(),title:'نوشتن صفحه اصلی سایت',priority:'critical',category:'income',importance:9,urgency:8,estimatedMinutes:120,deadline:new Date(Date.now()+2*86400000).toISOString().slice(0,10),projectId:p1.id,status:'todo',createdAt:new Date().toISOString()},
-    {id:DB.uid(),title:'بررسی رقبا',priority:'important',category:'growth',importance:7,urgency:6,estimatedMinutes:60,deadline:new Date(Date.now()+5*86400000).toISOString().slice(0,10),projectId:p1.id,status:'todo',createdAt:new Date().toISOString()},
-    {id:DB.uid(),title:'تمرین هوک‌های React',priority:'important',category:'learning',importance:8,urgency:5,estimatedMinutes:90,projectId:p2.id,status:'todo',createdAt:new Date().toISOString()},
-    {id:DB.uid(),title:'ورزش ۳۰ دقیقه‌ای',priority:'normal',category:'health',importance:6,urgency:4,estimatedMinutes:30,status:'todo',createdAt:new Date().toISOString()},
-    {id:DB.uid(),title:'پاسخ به ایمیل‌ها',priority:'normal',category:'admin',importance:4,urgency:7,estimatedMinutes:30,status:'todo',createdAt:new Date().toISOString()}
-  ]);
-}
-
-navigate('dashboard');
+    // Auto Refresh Google Data every 5 minutes (300,000 ms)
+    setInterval(loadTasksFromGoogle, 5 * 60 * 1000);
 </script>
+
 </body>
 </html>
