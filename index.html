@@ -1,951 +1,1846 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ارزش زمان - مینی اپ تلگرام</title>
-    <!-- Telegram Web App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
-    <style>
-        :root {
-            --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-sub: #64748b;
-            --border-color: #e2e8f0;
-            --box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08), 0 10px 10px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            --card-3d: 0 8px 20px -4px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-            --card-hover-3d: 0 14px 28px -6px rgba(37, 99, 235, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            --clock-bg: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-            --box-bg: #f8fafc;
-            --col-bg: #f8fafc;
-            --col-border: #e2e8f0;
-            --item-bg: #ffffff;
-            --item-hover: #f1f5f9;
-            --modal-bg: rgba(15, 23, 42, 0.6);
-        }
-        [data-theme="dark"] {
-            --bg-gradient: linear-gradient(135deg, #090d16 0%, #1e293b 100%);
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --border-color: #334155;
-            --box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-            --card-3d: 0 8px 20px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            --card-hover-3d: 0 14px 28px -6px rgba(59, 130, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            --clock-bg: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-            --box-bg: #0f172a;
-            --col-bg: #0f172a;
-            --col-border: #334155;
-            --item-bg: #0f172a;
-            --item-hover: #334155;
-            --modal-bg: rgba(0, 0, 0, 0.7);
-        }
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Vazirmatn', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-        body {
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 16px 10px;
-        }
-        .container {
-            width: 100%;
-            max-width: 960px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: var(--box-shadow);
-            position: relative;
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .icon-btn {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.1rem;
-            user-select: none;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.2);
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-        }
-        .icon-btn:hover {
-            background: var(--item-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px -2px rgba(0,0,0,0.1);
-        }
-        .icon-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .day-phase {
-            font-size: 0.8rem;
-            color: #2563eb;
-            background: #eff6ff;
-            border: 1px solid #dbeafe;
-            padding: 6px 14px;
-            border-radius: 99px;
-            font-weight: 600;
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
-        }
-        [data-theme="dark"] .day-phase {
-            color: #60a5fa;
-            background: #1e3a8a;
-            border-color: #1e40af;
-        }
-        .date-widget-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 14px 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            box-shadow: var(--card-3d);
-        }
-        .date-info-main {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .date-icon {
-            font-size: 1.6rem;
-            background: #eff6ff;
-            width: 45px;
-            height: 45px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
-        }
-        [data-theme="dark"] .date-icon {
-            background: #1e3a8a;
-        }
-        .date-text-group .date-title {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 2px;
-        }
-        .date-text-group .date-subtitle {
-            font-size: 0.73rem;
-            color: var(--text-sub);
-            font-weight: 500;
-        }
-        .season-badge {
-            font-size: 0.75rem;
-            color: #d97706;
-            background: #fef3c7;
-            border: 1px solid #fde68a;
-            padding: 6px 14px;
-            border-radius: 99px;
-            font-weight: 600;
-            white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15);
-        }
-        [data-theme="dark"] .season-badge {
-            color: #fbbf24;
-            background: #451a03;
-            border-color: #78350f;
-        }
-        
-        .digital-clock-card {
-            background: var(--clock-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 18px;
-            text-align: center;
-            margin-bottom: 12px;
-            box-shadow: var(--card-3d);
-        }
-        .digital-clock-label {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-        .digital-clock-time {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: var(--text-main);
-            font-variant-numeric: tabular-nums;
-            letter-spacing: 2px;
-            line-height: 1.1;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        }
-        
-        .time-info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 480px) {
-            .time-info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .time-info-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 14px;
-            text-align: center;
-            box-shadow: var(--card-3d);
-        }
-        .time-info-label {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-        .time-info-value {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--text-main);
-            font-variant-numeric: tabular-nums;
-        }
-        .time-info-value.countdown {
-            color: #dc2626;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ارزش زمان - مینی اپ تلگرام</title>
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border-color: #e2e8f0;
+            --box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08), 0 10px 10px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            --card-3d: 0 8px 20px -4px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            --card-hover-3d: 0 14px 28px -6px rgba(37, 99, 235, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            --clock-bg: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            --box-bg: #f8fafc;
+            --col-bg: #f8fafc;
+            --col-border: #e2e8f0;
+            --item-bg: #ffffff;
+            --item-hover: #f1f5f9;
+            --modal-bg: rgba(15, 23, 42, 0.6);
+        }
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #090d16 0%, #1e293b 100%);
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
+            --box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            --card-3d: 0 8px 20px -4px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            --card-hover-3d: 0 14px 28px -6px rgba(59, 130, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            --clock-bg: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            --box-bg: #0f172a;
+            --col-bg: #0f172a;
+            --col-border: #334155;
+            --item-bg: #0f172a;
+            --item-hover: #334155;
+            --modal-bg: rgba(0, 0, 0, 0.7);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Vazirmatn', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px 10px;
+        }
+        .container {
+            width: 100%;
+            max-width: 960px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: var(--box-shadow);
+            position: relative;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .icon-btn {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            user-select: none;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .icon-btn:hover {
+            background: var(--item-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px -2px rgba(0,0,0,0.1);
+        }
+        .icon-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .day-phase {
+            font-size: 0.8rem;
+            color: #2563eb;
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-weight: 600;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+        }
+        [data-theme="dark"] .day-phase {
+            color: #60a5fa;
+            background: #1e3a8a;
+            border-color: #1e40af;
+        }
+        .date-widget-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            box-shadow: var(--card-3d);
+        }
+        .date-info-main {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .date-icon {
+            font-size: 1.6rem;
+            background: #eff6ff;
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+        }
+        [data-theme="dark"] .date-icon {
+            background: #1e3a8a;
+        }
+        .date-text-group .date-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+        .date-text-group .date-subtitle {
+            font-size: 0.73rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+        .season-badge {
+            font-size: 0.75rem;
+            color: #d97706;
+            background: #fef3c7;
+            border: 1px solid #fde68a;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15);
+        }
+        [data-theme="dark"] .season-badge {
+            color: #fbbf24;
+            background: #451a03;
+            border-color: #78350f;
+        }
+        
+        .digital-clock-card {
+            background: var(--clock-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 18px;
+            text-align: center;
+            margin-bottom: 12px;
+            box-shadow: var(--card-3d);
+        }
+        .digital-clock-label {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .digital-clock-time {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        
+        .time-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 480px) {
+            .time-info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .time-info-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 14px;
+            text-align: center;
+            box-shadow: var(--card-3d);
+        }
+        .time-info-label {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .time-info-value {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+        }
+        .time-info-value.countdown {
+            color: #dc2626;
+        }
 
-        /* نمودار بزرگ و برجسته روند امروز */
-        .featured-time-card {
-            background: var(--box-bg);
-            border: 2px solid #2563eb;
-            border-radius: 20px;
-            padding: 18px;
-            text-align: center;
-            margin-bottom: 16px;
-            box-shadow: 0 12px 30px -6px rgba(37, 99, 235, 0.2), inset 0 1px 0 rgba(255,255,255,0.4);
-        }
-        .featured-time-title {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #2563eb;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .featured-time-wrapper {
-            position: relative;
-            width: 140px;
-            height: 140px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .featured-circular-chart {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-            filter: drop-shadow(0 4px 8px rgba(37, 99, 235, 0.2));
-        }
-        .featured-circle-bg {
-            fill: none;
-            stroke: var(--border-color);
-            stroke-width: 10;
-        }
-        .featured-circle-progress {
-            fill: none;
-            stroke-width: 10;
-            stroke-linecap: round;
-            stroke-dasharray: 251.33;
-            stroke-dashoffset: 251.33;
-            transition: stroke-dashoffset 1s linear;
-            stroke: url(#timeChartGradient);
-        }
-        .featured-chart-content {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .featured-percent-text {
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--text-main);
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-        }
-        .featured-percent-label {
-            font-size: 0.7rem;
-            color: var(--text-sub);
-            margin-top: 4px;
-            font-weight: 600;
-        }
+        /* نمودار بزرگ و برجسته روند امروز */
+        .featured-time-card {
+            background: var(--box-bg);
+            border: 2px solid #2563eb;
+            border-radius: 20px;
+            padding: 18px;
+            text-align: center;
+            margin-bottom: 16px;
+            box-shadow: 0 12px 30px -6px rgba(37, 99, 235, 0.2), inset 0 1px 0 rgba(255,255,255,0.4);
+        }
+        .featured-time-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #2563eb;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .featured-time-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .featured-circular-chart {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            filter: drop-shadow(0 4px 8px rgba(37, 99, 235, 0.2));
+        }
+        .featured-circle-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 10;
+        }
+        .featured-circle-progress {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 251.33;
+            stroke-dashoffset: 251.33;
+            transition: stroke-dashoffset 1s linear;
+            stroke: url(#timeChartGradient);
+        }
+        .featured-chart-content {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .featured-percent-text {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+        .featured-percent-label {
+            font-size: 0.7rem;
+            color: var(--text-sub);
+            margin-top: 4px;
+            font-weight: 600;
+        }
 
-        /* گرید نمودارها */
-        .charts-grid-4 {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 900px) {
-            .charts-grid-4 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (max-width: 480px) {
-            .charts-grid-4 {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .charts-grid-5 {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 1024px) {
-            .charts-grid-5 {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        @media (max-width: 600px) {
-            .charts-grid-5 {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
+        /* گرید نمودارها */
+        .charts-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 900px) {
+            .charts-grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 480px) {
+            .charts-grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .charts-grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 1024px) {
+            .charts-grid-5 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 600px) {
+            .charts-grid-5 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
 
-        .chart-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 12px;
-            text-align: center;
-            position: relative;
-            box-shadow: var(--card-3d);
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-        }
-        .chart-card.interactive {
-            cursor: pointer;
-        }
-        .chart-card.interactive:hover {
-            border-color: #10b981;
-            transform: translateY(-4px);
-            box-shadow: var(--card-hover-3d);
-        }
-        .chart-card.interactive:active {
-            transform: translateY(1px);
-        }
-        .chart-hint {
-            font-size: 0.62rem;
-            color: #10b981;
-            margin-top: 4px;
-            font-weight: 600;
-        }
-        .chart-wrapper {
-            position: relative;
-            width: 95px;
-            height: 95px;
-            margin: 0 auto 4px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .circular-chart {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.06));
-        }
-        .circle-bg {
-            fill: none;
-            stroke: var(--border-color);
-            stroke-width: 8;
-        }
-        .circle-progress {
-            fill: none;
-            stroke-width: 8;
-            stroke-linecap: round;
-            stroke-dasharray: 263.89;
-            stroke-dashoffset: 263.89;
-            transition: stroke-dashoffset 1s linear;
-        }
-        .circle-progress.energy-progress { stroke: url(#energyChartGradient); }
-        .circle-progress.tasks-progress { stroke: #2563eb; }
-        .circle-progress.debt-progress { stroke: #dc2626; }
-        .circle-progress.vibration-progress { stroke: #10b981; }
+        .chart-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 12px;
+            text-align: center;
+            position: relative;
+            box-shadow: var(--card-3d);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .chart-card.interactive {
+            cursor: pointer;
+        }
+        .chart-card.interactive:hover {
+            border-color: #10b981;
+            transform: translateY(-4px);
+            box-shadow: var(--card-hover-3d);
+        }
+        .chart-card.interactive:active {
+            transform: translateY(1px);
+        }
+        .chart-hint {
+            font-size: 0.62rem;
+            color: #10b981;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        .chart-wrapper {
+            position: relative;
+            width: 95px;
+            height: 95px;
+            margin: 0 auto 4px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .circular-chart {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.06));
+        }
+        .circle-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 8;
+        }
+        .circle-progress {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 263.89;
+            stroke-dashoffset: 263.89;
+            transition: stroke-dashoffset 1s linear;
+        }
+        .circle-progress.energy-progress { stroke: url(#energyChartGradient); }
+        .circle-progress.tasks-progress { stroke: #2563eb; }
+        .circle-progress.debt-progress { stroke: #dc2626; }
+        .circle-progress.vibration-progress { stroke: #10b981; }
 
-        .circle-progress.income-progress { stroke: #10b981; }
-        .circle-progress.expense-progress { stroke: #ef4444; }
-        .circle-progress.receivable-progress { stroke: #3b82f6; }
-        .circle-progress.liability-progress { stroke: #d97706; }
-        .circle-progress.investment-progress { stroke: #8b5cf6; }
+        .circle-progress.income-progress { stroke: #10b981; }
+        .circle-progress.expense-progress { stroke: #ef4444; }
+        .circle-progress.receivable-progress { stroke: #3b82f6; }
+        .circle-progress.liability-progress { stroke: #d97706; }
+        .circle-progress.investment-progress { stroke: #8b5cf6; }
 
-        .chart-content {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .percent-text {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: var(--text-main);
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-        }
-        .percent-label {
-            font-size: 0.58rem;
-            color: var(--text-sub);
-            margin-top: 3px;
-            font-weight: 500;
-        }
+        .chart-content {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .percent-text {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+        }
+        .percent-label {
+            font-size: 0.58rem;
+            color: var(--text-sub);
+            margin-top: 3px;
+            font-weight: 500;
+        }
 
-        .section-title-bar {
-            margin-top: 24px;
-            margin-bottom: 12px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: var(--text-main);
-        }
+        .section-title-bar {
+            margin-top: 24px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-main);
+        }
 
-        .onething-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--card-3d);
-        }
-        .onething-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            flex-grow: 1;
-            margin-left: 12px;
-        }
-        .onething-label {
-            font-size: 0.72rem;
-            color: #d97706;
-            font-weight: 700;
-        }
-        .onething-value {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-        .action-sm-btn {
-            background: #2563eb;
-            color: #ffffff;
-            border: none;
-            padding: 7px 16px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255,255,255,0.3);
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-        }
-        .action-sm-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255,255,255,0.4);
-        }
-        .action-sm-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
-        }
+        .onething-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--card-3d);
+        }
+        .onething-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex-grow: 1;
+            margin-left: 12px;
+        }
+        .onething-label {
+            font-size: 0.72rem;
+            color: #d97706;
+            font-weight: 700;
+        }
+        .onething-value {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .action-sm-btn {
+            background: #2563eb;
+            color: #ffffff;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+        .action-sm-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255,255,255,0.4);
+        }
+        .action-sm-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
+        }
 
-        .chair-timer-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: var(--card-3d);
-        }
-        .chair-timer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .chair-timer-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .chair-status {
-            font-size: 0.72rem;
-            color: var(--text-sub);
-            font-weight: 500;
-        }
-        .chair-timer-body {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        @media (max-width: 480px) {
-            .chair-timer-body {
-                flex-direction: column;
-                gap: 12px;
-                text-align: center;
-            }
-        }
-        .chair-display {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--text-main);
-            font-variant-numeric: tabular-nums;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .chair-controls-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .chair-timer-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-3d);
+        }
+        .chair-timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .chair-timer-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .chair-status {
+            font-size: 0.72rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+        .chair-timer-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        @media (max-width: 480px) {
+            .chair-timer-body {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+        .chair-display {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .chair-controls-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-        .quote-box {
-            background: var(--box-bg);
-            border-right: 4px solid #2563eb;
-            border-top: 1px solid var(--border-color);
-            border-left: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            padding: 12px 16px;
-            border-radius: 0 14px 14px 0;
-            margin-bottom: 20px;
-            font-size: 0.82rem;
-            color: var(--text-main);
-            line-height: 1.6;
-            font-weight: 500;
-            box-shadow: var(--card-3d);
-        }
-        .coaching-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: var(--card-3d);
-        }
-        .coaching-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #2563eb;
-            margin-bottom: 10px;
-        }
-        [data-theme="dark"] .coaching-header {
-            color: #60a5fa;
-        }
-        .coaching-body {
-            font-size: 0.8rem;
-            color: var(--text-main);
-            line-height: 1.7;
-            font-weight: 500;
-        }
-        .coaching-section-title {
-            font-weight: 700;
-            color: #059669;
-            margin-top: 8px;
-            display: block;
-        }
-        [data-theme="dark"] .coaching-section-title {
-            color: #34d399;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 640px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .stat-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            padding: 14px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: var(--card-3d);
-        }
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-        .stat-value {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--text-main);
-            font-variant-numeric: tabular-nums;
-        }
-        .google-services-grid {
-            border-top: 1px solid var(--border-color);
-            padding-top: 16px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        @media (max-width: 640px) {
-            .google-services-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .service-column {
-            background: var(--col-bg);
-            border: 1px solid var(--col-border);
-            border-radius: 16px;
-            padding: 14px;
-            box-shadow: var(--card-3d);
-        }
-        .column-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .column-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .column-link {
-            font-size: 0.7rem;
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .column-link:hover {
-            text-decoration: underline;
-        }
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--item-bg);
-            border: 1px solid var(--border-color);
-            padding: 8px 10px;
-            border-radius: 10px;
-            margin-bottom: 6px;
-            font-size: 0.8rem;
-            color: var(--text-main);
-            font-weight: 500;
-            text-decoration: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
-        }
-        .task-item:hover {
-            background: var(--item-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
-        }
-        .task-time {
-            color: #2563eb;
-            font-weight: 700;
-            font-size: 0.72rem;
-            font-variant-numeric: tabular-nums;
-            background: #eff6ff;
-            padding: 2px 6px;
-            border-radius: 6px;
-            white-space: nowrap;
-        }
-        [data-theme="dark"] .task-time {
-            color: #60a5fa;
-            background: #1e3a8a;
-        }
-        .empty-text {
-            color: var(--text-sub);
-            font-size: 0.78rem;
-            text-align: center;
-            padding: 10px;
-        }
-        .refresh-status {
-            font-size: 0.7rem;
-            color: var(--text-sub);
-            text-align: center;
-            margin-top: 14px;
-        }
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--modal-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            backdrop-filter: blur(4px);
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-        }
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 22px;
-            width: 90%;
-            max-width: 400px;
-            padding: 22px;
-            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
-            transform: translateY(15px);
-            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .modal-overlay.active .modal-card {
-            transform: translateY(0);
-        }
-        .modal-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 14px;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 12px;
-        }
-        .form-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-sub);
-            margin-bottom: 4px;
-            display: block;
-        }
-        .form-input, .form-select {
-            width: 100%;
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 9px 12px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-family: inherit;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .energy-option-btn {
-            display: block;
-            width: 100%;
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-align: right;
-            cursor: pointer;
-            margin-bottom: 8px;
-            box-shadow: var(--card-3d);
-            transition: transform 0.1s ease, background 0.15s ease;
-        }
-        .energy-option-btn:hover {
-            background: var(--item-hover);
-            border-color: #10b981;
-            transform: translateY(-2px);
-        }
-        .modal-submit-btn {
-            background: #10b981;
-            color: #ffffff;
-            border: none;
-            width: 100%;
-            padding: 11px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255,255,255,0.4);
-            transition: transform 0.1s ease;
-        }
-        .modal-submit-btn:hover {
-            background: #059669;
-            transform: translateY(-2px);
-        }
-        .modal-submit-btn:active {
-            transform: translateY(1px);
-        }
-        .modal-close-btn {
-            display: block;
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text-sub);
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-top: 8px;
-            cursor: pointer;
-            text-align: center;
-            padding: 6px;
-        }
-    </style>
+        .quote-box {
+            background: var(--box-bg);
+            border-right: 4px solid #2563eb;
+            border-top: 1px solid var(--border-color);
+            border-left: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 0 14px 14px 0;
+            margin-bottom: 20px;
+            font-size: 0.82rem;
+            color: var(--text-main);
+            line-height: 1.6;
+            font-weight: 500;
+            box-shadow: var(--card-3d);
+        }
+        .coaching-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-3d);
+        }
+        .coaching-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        [data-theme="dark"] .coaching-header {
+            color: #60a5fa;
+        }
+        .coaching-body {
+            font-size: 0.8rem;
+            color: var(--text-main);
+            line-height: 1.7;
+            font-weight: 500;
+        }
+        .coaching-section-title {
+            font-weight: 700;
+            color: #059669;
+            margin-top: 8px;
+            display: block;
+        }
+        [data-theme="dark"] .coaching-section-title {
+            color: #34d399;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .stat-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: var(--card-3d);
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            font-variant-numeric: tabular-nums;
+        }
+        .google-services-grid {
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 640px) {
+            .google-services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .service-column {
+            background: var(--col-bg);
+            border: 1px solid var(--col-border);
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: var(--card-3d);
+        }
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .column-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .column-link {
+            font-size: 0.7rem;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .column-link:hover {
+            text-decoration: underline;
+        }
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--item-bg);
+            border: 1px solid var(--border-color);
+            padding: 8px 10px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            color: var(--text-main);
+            font-weight: 500;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .task-item:hover {
+            background: var(--item-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+        }
+        .task-time {
+            color: #2563eb;
+            font-weight: 700;
+            font-size: 0.72rem;
+            font-variant-numeric: tabular-nums;
+            background: #eff6ff;
+            padding: 2px 6px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        [data-theme="dark"] .task-time {
+            color: #60a5fa;
+            background: #1e3a8a;
+        }
+        .empty-text {
+            color: var(--text-sub);
+            font-size: 0.78rem;
+            text-align: center;
+            padding: 10px;
+        }
+        .refresh-status {
+            font-size: 0.7rem;
+            color: var(--text-sub);
+            text-align: center;
+            margin-top: 14px;
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--modal-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            backdrop-filter: blur(4px);
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 22px;
+            width: 90%;
+            max-width: 400px;
+            padding: 22px;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35);
+            transform: translateY(15px);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-overlay.active .modal-card {
+            transform: translateY(0);
+        }
+        .modal-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 4px;
+            display: block;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 9px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-family: inherit;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .energy-option-btn {
+            display: block;
+            width: 100%;
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: right;
+            cursor: pointer;
+            margin-bottom: 8px;
+            box-shadow: var(--card-3d);
+            transition: transform 0.1s ease, background 0.15s ease;
+        }
+        .energy-option-btn:hover {
+            background: var(--item-hover);
+            border-color: #10b981;
+            transform: translateY(-2px);
+        }
+        .modal-submit-btn {
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 11px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+            transition: transform 0.1s ease;
+        }
+        .modal-submit-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        .modal-submit-btn:active {
+            transform: translateY(1px);
+        }
+        .modal-close-btn {
+            display: block;
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 8px;
+            cursor: pointer;
+            text-align: center;
+            padding: 6px;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <div class="header-top">
-        <div class="day-phase" id="dayPhase">در حال بارگذاری...</div>
-        <div class="header-controls">
-            <button class="icon-btn" id="personalSettingsBtn" title="تنظیمات فردی">⚙️</button>
-            <button class="icon-btn" id="themeBtn" title="تغییر تم">🌙</button>
-            <button class="icon-btn" id="fullscreenBtn" title="تمام‌صفحه">⛶</button>
-            <button class="icon-btn" id="refreshBtn" title="بروزرسانی">🔄</button>
-        </div>
-    </div>
+    <div class="header-top">
+        <div class="day-phase" id="dayPhase">در حال بارگذاری...</div>
+        <div class="header-controls">
+            <button class="icon-btn" id="personalSettingsBtn" title="تنظیمات فردی">⚙️</button>
+            <button class="icon-btn" id="themeBtn" title="تغییر تم">🌙</button>
+            <button class="icon-btn" id="fullscreenBtn" title="تمام‌صفحه">⛶</button>
+            <button class="icon-btn" id="refreshBtn" title="بروزرسانی">🔄</button>
+        </div>
+    </div>
 
-    <!-- 1. تاریخ و فصل -->
-    <div class="date-widget-card">
-        <div class="date-info-main">
-            <div class="date-icon" id="dateIcon">📅</div>
-            <div class="date-text-group">
-                <div class="date-title" id="currentDateTitle">در حال بارگذاری تاریخ...</div>
-                <div class="date-subtitle" id="dayOfYearText">روزشمار سال: --</div>
-            </div>
-        </div>
-        <div class="season-badge" id="seasonBadge">فصل: --</div>
-    </div>
+    <!-- 1. تاریخ و فصل -->
+    <div class="date-widget-card">
+        <div class="date-info-main">
+            <div class="date-icon" id="dateIcon">📅</div>
+            <div class="date-text-group">
+                <div class="date-title" id="currentDateTitle">در حال بارگذاری تاریخ...</div>
+                <div class="date-subtitle" id="dayOfYearText">روزشمار سال: --</div>
+            </div>
+        </div>
+        <div class="season-badge" id="seasonBadge">فصل: --</div>
+    </div>
 
-    <!-- 2. ساعت کنونی -->
-    <div class="digital-clock-card">
-        <div class="digital-clock-label">ساعت کنونی</div>
-        <div class="digital-clock-time" id="currentClock">--:--:--</div>
-    </div>
+    <!-- 2. ساعت کنونی -->
+    <div class="digital-clock-card">
+        <div class="digital-clock-label">ساعت کنونی</div>
+        <div class="digital-clock-time" id="currentClock">--:--:--</div>
+    </div>
 
-    <!-- 3. ساعت‌های سپری شده و زمان باقیمانده -->
-    <div class="time-info-grid">
-        <div class="time-info-card">
-            <div class="time-info-label">ساعت‌های سپری شده از امروز</div>
-            <div class="time-info-value" id="elapsedTime">--:--</div>
-        </div>
-        <div class="time-info-card">
-            <div class="time-info-label">زمان باقیمانده تا پایان امروز</div>
-            <div class="time-info-value countdown" id="remainingTime">--:--:--</div>
-        </div>
-    </div>
+    <!-- 3. ساعت‌های سپری شده و زمان باقیمانده -->
+    <div class="time-info-grid">
+        <div class="time-info-card">
+            <div class="time-info-label">ساعت‌های سپری شده از امروز</div>
+            <div class="time-info-value" id="elapsedTime">--:--</div>
+        </div>
+        <div class="time-info-card">
+            <div class="time-info-label">زمان باقیمانده تا پایان امروز</div>
+            <div class="time-info-value countdown" id="remainingTime">--:--:--</div>
+        </div>
+    </div>
 
-    <!-- 4. روند امروز (نمودار گرافیکی بزرگ و برجسته) -->
-    <div class="featured-time-card">
-        <div class="featured-time-title">⏳ روند امروز (مصرف زمان)</div>
-        <div class="featured-time-wrapper">
-            <svg class="featured-circular-chart" viewBox="0 0 100 100">
-                <defs>
-                    <linearGradient id="timeChartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#2563eb" />
-                        <stop offset="50%" stop-color="#d97706" />
-                        <stop offset="100%" stop-color="#dc2626" />
-                    </linearGradient>
-                </defs>
-                <circle class="featured-circle-bg" cx="50" cy="50" r="40" />
-                <circle class="featured-circle-progress" id="timeCircleProgress" cx="50" cy="50" r="40" />
-            </svg>
-            <div class="featured-chart-content">
-                <div class="featured-percent-text" id="timeProgressPercent">0%</div>
-                <div class="featured-percent-label">سپری‌شده</div>
-            </div>
-        </div>
-    </div>
+    <!-- 4. روند امروز (نمودار گرافیکی بزرگ و برجسته) -->
+    <div class="featured-time-card">
+        <div class="featured-time-title">⏳ روند امروز (مصرف زمان)</div>
+        <div class="featured-time-wrapper">
+            <svg class="featured-circular-chart" viewBox="0 0 100 100">
+                <defs>
+                    <linearGradient id="timeChartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#2563eb" />
+                        <stop offset="50%" stop-color="#d97706" />
+                        <stop offset="100%" stop-color="#dc2626" />
+                    </linearGradient>
+                </defs>
+                <circle class="featured-circle-bg" cx="50" cy="50" r="40" />
+                <circle class="featured-circle-progress" id="timeCircleProgress" cx="50" cy="50" r="40" />
+            </svg>
+            <div class="featured-chart-content">
+                <div class="featured-percent-text" id="timeProgressPercent">0%</div>
+                <div class="featured-percent-label">سپری‌شده</div>
+            </div>
+        </div>
+    </div>
 
-    <!-- 5. سایر نمودارها (انرژی، تسک‌ها، بدهی و طلب، ارتعاش روزانه) در یک ردیف -->
-    <div class="charts-grid-4">
-        <!-- انرژی مغز -->
-        <div class="chart-card interactive" id="energyCardBtn" title="تنظیم دستی انرژی">
-            <div class="chart-wrapper">
-                <svg class="circular-chart" viewBox="0 0 100 100">
-                    <defs>
-                        <linearGradient id="energyChartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#10b981" />
-                            <stop offset="50%" stop-color="#06b6d4" />
-                            <stop offset="100%" stop-color="#3b82f6" />
-                        </linearGradient>
-                    </defs>
-                    <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress energy-progress" id="energyCircleProgress" cx="50" cy="50" r="42" />
-                </svg>
-                <div class="chart-content">
-                    <div class="percent-text" id="energyPercentText">0%</div>
-                    <div class="percent-label">انرژی مغز</div>
-                </div>
-            </div>
-            <div class="chart-hint">⚡ تنظیم دستی</div>
-        </div>
+    <!-- 5. سایر نمودارها (انرژی، تسک‌ها، بدهی و طلب، ارتعاش روزانه) در یک ردیف -->
+    <div class="charts-grid-4">
+        <!-- انرژی مغز -->
+        <div class="chart-card interactive" id="energyCardBtn" title="تنظیم دستی انرژی">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="energyChartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#10b981" />
+                            <stop offset="50%" stop-color="#06b6d4" />
+                            <stop offset="100%" stop-color="#3b82f6" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress energy-progress" id="energyCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="energyPercentText">0%</div>
+                    <div class="percent-label">انرژی مغز</div>
+                </div>
+            </div>
+            <div class="chart-hint">⚡ تنظیم دستی</div>
+        </div>
 
-        <!-- مدیریت تسک‌ها -->
-        <div class="chart-card interactive" id="tasksCardBtn" title="مشاهده جزئیات تسک‌ها">
-            <div class="chart-wrapper">
-                <svg class="circular-chart" viewBox="0 0 100 100">
-                    <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress tasks-progress" id="tasksCircleProgress" cx="50" cy="50" r="42" />
-                </svg>
-                <div class="chart-content">
-                    <div class="percent-text" id="tasksPercentText">0%</div>
-                    <div class="percent-label">مدیریت تسک‌ها</div>
-                </div>
-            </div>
-            <div class="chart-hint" style="color:#2563eb;" id="tasksHintText">📌 تسک‌های فعال</div>
-        </div>
+        <!-- مدیریت تسک‌ها -->
+        <div class="chart-card interactive" id="tasksCardBtn" title="مشاهده جزئیات تسک‌ها">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress tasks-progress" id="tasksCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="tasksPercentText">0%</div>
+                    <div class="percent-label">مدیریت تسک‌ها</div>
+                </div>
+            </div>
+            <div class="chart-hint" style="color:#2563eb;" id="tasksHintText">📌 تسک‌های فعال</div>
+        </div>
 
-        <!-- بدهی و طلب -->
-        <div class="chart-card interactive" id="debtCardBtn" title="مشاهده جزئیات بدهی و طلب">
-            <div class="chart-wrapper">
-                <svg class="circular-chart" viewBox="0 0 100 100">
-                    <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress debt-progress" id="debtCircleProgress" cx="50" cy="50" r="42" />
-                </svg>
-                <div class="chart-content">
-                    <div class="percent-text" id="debtPercentText">0%</div>
-               
+        <!-- بدهی و طلب -->
+        <div class="chart-card interactive" id="debtCardBtn" title="مشاهده جزئیات بدهی و طلب">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress debt-progress" id="debtCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="debtPercentText">0%</div>
+                    <div class="percent-label">بدهی و طلب</div>
+                </div>
+            </div>
+            <div class="chart-hint" style="color:#dc2626;" id="debtHintText">📊 تحلیل مالی</div>
+        </div>
+
+        <!-- ارتعاش روزانه -->
+        <div class="chart-card interactive" id="vibrationCardBtn" title="مشاهده جزئیات ارتعاش روزانه">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress vibration-progress" id="vibrationCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="vibrationPercentText">0%</div>
+                    <div class="percent-label">ارتعاش روزانه</div>
+                </div>
+            </div>
+            <div class="chart-hint" style="color:#10b981;" id="vibrationHintText">✨ ارتعاش مثبت</div>
+        </div>
+    </div>
+
+    <!-- 6. داشبورد مالی جدید (درآمد، هزینه، طلب، بدهی، سرمایه‌گذاری) -->
+    <div class="section-title-bar">
+        <span>💰 داشبورد مالی و دارایی‌ها</span>
+        <button class="action-sm-btn" onclick="openFinancialModal()">ویرایش مالی ✏️</button>
+    </div>
+    <div class="charts-grid-5" id="financeChartsGrid">
+        <!-- 1. درآمد -->
+        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم درآمد">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress income-progress" id="incomeCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="incomePercentText">0%</div>
+                    <div class="percent-label">درآمد</div>
+                </div>
+            </div>
+            <div class="chart-hint" style="color:#10b981;">💵 ورود وجه</div>
+        </div>
+
+        <!-- 2. هزینه -->
+        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم هزینه">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress expense-progress" id="expenseCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="expensePercentText">0%</div>
+                    <div class="percent-label">هزینه</div>
+                </div>
+            </div>
+            <div class="chart-hint" style="color:#ef4444;">🛒 خرج کرد</div>
+        </div>
+
+        <!-- 3. طلب -->
+        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم طلب">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress receivable-progress" id="receivableCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="receivablePercentText">0%</div>
+                    <div class="percent-label">طلب</div>
+                </div>
+            </div>
+            <div class="chart-hint" style="color:#3b82f6;">🤝 مطالبه وجه</div>
+        </div>
+
+        <!-- 4. بدهی -->
+        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم بدهی">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress liability-progress" id="liabilityCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="liabilityPercentText">0%</div>
+                    <div class="percent-label">بدهی</div>
+                </div>
+            </div>
+            <div class="chart-hint" style="color:#d97706;">💳 تعهدات</div>
+        </div>
+
+        <!-- 5. سرمایه‌گذاری -->
+        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم سرمایه‌گذاری">
+            <div class="chart-wrapper">
+                <svg class="circular-chart" viewBox="0 0 100 100">
+                    <circle class="circle-bg" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress investment-progress" id="investmentCircleProgress" cx="50" cy="50" r="42" />
+                </svg>
+                <div class="chart-content">
+                    <div class="percent-text" id="investmentPercentText">0%</div>
+                    <div class="percent-label">سرمایه‌گذاری</div>
+                </div>
+            </div>
+            <div class="chart-hint" style="color:#8b5cf6;">📈 توسعه دارایی</div>
+        </div>
+    </div>
+
+    <!-- The One Thing Display Card -->
+    <div class="onething-card" id="oneThingCard">
+        <div class="onething-info">
+            <span class="onething-label">🎯 هدف کلیدی امروز (The One Thing)</span>
+            <span class="onething-value" id="displayOneThing">هنوز تعییین نشده است (کلیک برای ثبت)</span>
+        </div>
+        <button class="action-sm-btn" onclick="openPersonalModal()">ویرایش</button>
+    </div>
+
+    <!-- Chair Sitting Timer Card -->
+    <div class="chair-timer-card">
+        <div class="chair-timer-header">
+            <div class="chair-timer-title">🪑 تایمر سلامت نشستن (صندلی)</div>
+            <div class="chair-status" id="chairStatusText">آماده به کار</div>
+        </div>
+        <div class="chair-timer-body">
+            <div class="chair-display" id="chairDisplay">45:00</div>
+            <div class="chair-controls-row">
+                <select id="chairTimeSelect" class="form-select" style="max-width: 140px;">
+                    <option value="25">۲۵ دقیقه</option>
+                    <option value="45" selected>۴۵ دقیقه</option>
+                    <option value="60">۶۰ دقیقه</option>
+                </select>
+                <button class="action-sm-btn" id="chairStartBtn" onclick="toggleChairTimer()" style="padding: 8px 16px; font-size: 0.8rem;">شروع تایمر</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="quote-box" id="timeQuote">
+        «زمان دارایی تجدیدناپذیری است؛ آن را خرج نکن، سرمایه‌گذاری کن.»
+    </div>
+
+    <!-- Coaching Section -->
+    <div class="coaching-card" id="coachingCard">
+        <div class="coaching-header">🧠 تحلیل و کوچینگ هوشمند (زمان و تسک‌ها)</div>
+        <div class="coaching-body" id="coachingText">در حال پردازش وضعیت کارها و تسک‌ها...</div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">ساعت‌های سپری شده</div>
+            <div class="stat-value" id="elapsedTimeStat">--:--</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">شاخص بار تقویم امروز</div>
+            <div class="stat-value" id="calendarLoadStatus">در حال تحلیل...</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">تعداد کل تسک‌ها</div>
+            <div class="stat-value" id="taskStatsStatus">0</div>
+        </div>
+    </div>
+
+    <!-- 2-Column Section -->
+    <div class="google-services-grid">
+        <div class="service-column">
+            <div class="column-header">
+                <div class="column-title">📅 تقویم گوگل امروز</div>
+                <a href="https://calendar.google.com" target="_blank" class="column-link">باز کردن تقویم ↗</a>
+            </div>
+            <div id="calendarList">
+                <div class="empty-text">در حال بارگذاری تقویم...</div>
+            </div>
+        </div>
+        <div class="service-column">
+            <div class="column-header">
+                <div class="column-title">📌 گوگل تسک</div>
+                <a href="https://tasks.google.com" target="_blank" class="column-link">باز کردن تسک‌ها ↗</a>
+            </div>
+            <div id="taskList">
+                <div class="empty-text">در حال بارگذاری تسک‌ها...</div>
+            </div>
+        </div>
+    </div>
+    <div class="refresh-status" id="refreshStatus">آخرین بروزرسانی: در حال دریافت...</div>
+</div>
+
+<!-- Modals -->
+<div class="modal-overlay" id="tasksModal">
+    <div class="modal-card">
+        <div class="modal-title">📌 وضعیت مدیریت تسک‌ها (بررسی و تیک زدن)</div>
+        <div id="tasksModalContent" style="font-size:0.8rem; line-height:1.7; color:var(--text-main); margin-bottom:14px;">در حال تحلیل تسک‌های فعال...</div>
+        <button class="modal-close-btn" onclick="closeTasksModal()">بستن</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="debtModal">
+    <div class="modal-card">
+        <div class="modal-title">📊 وضعیت بدهی و طلب (Google Tasks)</div>
+        <div id="debtModalContent" style="font-size:0.8rem; line-height:1.7; color:var(--text-main); margin-bottom:14px;">در حال استخراج تراکنش‌های مالی...</div>
+        <button class="modal-close-btn" onclick="closeDebtModal()">بستن</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="vibrationModal">
+    <div class="modal-card">
+        <div class="modal-title">✨ ارتعاش روزانه (بررسی و تیک تسک‌ها)</div>
+        <div id="vibrationModalContent" style="font-size:0.8rem; line-height:1.7; color:var(--text-main); margin-bottom:14px;">در حال بررسی تسک‌های حال‌خوب‌کن...</div>
+        <button class="modal-close-btn" onclick="closeVibrationModal()">بستن</button>
+    </div>
+</div>
+
+<!-- Financial Settings Modal -->
+<div class="modal-overlay" id="financialModal">
+    <div class="modal-card">
+        <div class="modal-title">💰 تنظیم دستی ارقام مالی (درصد)</div>
+        <div class="form-group">
+            <label class="form-label">💵 درصد تحقق درآمد</label>
+            <input type="number" id="inputIncome" class="form-input" min="0" max="100" placeholder="مثلاً 70">
+        </div>
+        <div class="form-group">
+            <label class="form-label">🛒 درصد صرف شده هزینه از بودجه</label>
+            <input type="number" id="inputExpense" class="form-input" min="0" max="100" placeholder="مثلاً 40">
+        </div>
+        <div class="form-group">
+            <label class="form-label">🤝 درصد وصول طلب‌ها</label>
+            <input type="number" id="inputReceivable" class="form-input" min="0" max="100" placeholder="مثلاً 50">
+        </div>
+        <div class="form-group">
+            <label class="form-label">💳 درصد پرداخت بدهی‌ها</label>
+            <input type="number" id="inputLiability" class="form-input" min="0" max="100" placeholder="مثلاً 30">
+        </div>
+        <div class="form-group">
+            <label class="form-label">📈 درصد پیشرفت سرمایه‌گذاری</label>
+            <input type="number" id="inputInvestment" class="form-input" min="0" max="100" placeholder="مثلاً 60">
+        </div>
+        <button class="modal-submit-btn" onclick="saveFinancialSettings()">ذخیره تغییرات مالی</button>
+        <button class="modal-close-btn" onclick="closeFinancialModal()">بستن</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="personalModal">
+    <div class="modal-card">
+        <div class="modal-title">⚙️ تنظیمات روزانه و مدیریت فردی</div>
+        <div class="form-group">
+            <label class="form-label">🎯 هدف کلیدی امروز (The One Thing)</label>
+            <input type="text" id="inputOneThing" class="form-input" placeholder="مثلاً: تکمیل نهایی لندینگ سپند وب">
+        </div>
+        <div class="form-group">
+            <label class="form-label">💻 حالت کاری امروز (Work Mode)</label>
+            <select id="inputWorkMode" class="form-select">
+                <option value="deep">روز کار عمیق و متمرکز (Deep Work)</option>
+                <option value="meetings">روز جلسات فشرده و ارتباطات (Meetings)</option>
+                <option value="recovery">روز سبک و ریکاوری (Recovery)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">💤 ساعات خواب دیشب</label>
+            <select id="inputSleepHours" class="form-select">
+                <option value="8">۸ ساعت یا بیشتر (عالی)</option>
+                <option value="7">۷ ساعت (مطلوب)</option>
+                <option value="6">۶ ساعت (متوسط)</option>
+                <option value="5">کمتر از ۶ ساعت (خسته)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">🌪️ سطح استرس یا فشار ذهنی در لحظه</label>
+            <select id="inputStressLevel" class="form-select">
+                <option value="calm">آرام و متمرکز 🟢</option>
+                <option value="normal">عادی و کنترل‌شده 🟡</option>
+                <option value="stressed">تحت فشار / کلافه 🔴</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">📊 تمرکز و بودجه زمانی پروژه‌ها امروز</label>
+            <select id="inputProjectFocus" class="form-select">
+                <option value="sepand">سپند وب (طراحی وب / سئو)</option>
+                <option value="autoorang">اتورنگ (فروشگاه آنلاین)</option>
+                <option value="loans">مشاور وام (تامین مالی)</option>
+                <option value="personal">توسعه شخصی و مینی‌اپ</option>
+            </select>
+        </div>
+        <button class="modal-submit-btn" onclick="savePersonalSettings()">ذخیره و اعمال تنظیمات</button>
+        <button class="modal-close-btn" onclick="closePersonalModal()">انصراف</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="energyModal">
+    <div class="modal-card">
+        <div class="modal-title">🔋 تنظیم سطح انرژی مغز</div>
+        <button class="energy-option-btn" onclick="setManualEnergy(95, 'فوق‌العاده و اوج تمرکز 🔥')">🔥 فوق‌العاده و اوج تمرکز (۹۵٪)</button>
+        <button class="energy-option-btn" onclick="setManualEnergy(75, 'خوب و متمرکز ⚡')">⚡ خوب و متمرکز (۷۵٪)</button>
+        <button class="energy-option-btn" onclick="setManualEnergy(50, 'متعادل و معمولی ⚖️')">⚖️ متعادل و معمولی (۵۰٪)</button>
+        <button class="energy-option-btn" onclick="setManualEnergy(30, 'خسته و نیازمند استراحت ☕')">☕ خسته و نیازمند استراحت (۳۰٪)</button>
+        <button class="energy-option-btn" style="border-color:#2563eb; color:#2563eb;" onclick="resetManualEnergy()">🔄 بازگشت به حالت خودکار (ساعتی)</button>
+        <button class="modal-close-btn" onclick="closeEnergyModal()">بستن</button>
+    </div>
+</div>
+
+<script>
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyM7_r6et0xz-1W1pV1iTYgciLeALMchllPOCPLIFuWp7Mcwz7I7cCvuALswQaG2rZ6/exec';
+    const quotes = [
+        "«زمان دارایی تجدیدناپذیری است؛ آن را خرج نکن، سرمایه‌گذاری کن.»",
+        "«امروز، همان فردایی است که دیروز نگرانش بودی. چه کردی؟»",
+        "«تفاوت برندگان و بازندگان در نحوه مدیریت این ۲۴ ساعت مشترک است.»",
+        "«زندگی شمارش معکوس است؛ هر ثانیه که می‌گذرد، یعنی یک قدم جلوتر یا درجا زدن.»",
+        "«کارهای بزرگ با انباشت دقیقه‌های کوچک متمرکز ساخته می‌شوند.»"
+    ];
+
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+        tg.ready();
+        tg.expand();
+    }
+
+    const themeBtn = document.getElementById('themeBtn');
+    let currentTheme = localStorage.getItem('theme') || (tg && tg.colorScheme ? tg.colorScheme : 'light');
+    
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+        localStorage.setItem('theme', theme);
+    }
+    applyTheme(currentTheme);
+
+    themeBtn.addEventListener('click', () => {
+        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+        applyTheme(currentTheme);
+    });
+
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => console.log(err));
+        } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+        }
+    });
+
+    const refreshBtn = document.getElementById('refreshBtn');
+    refreshBtn.addEventListener('click', () => loadTasksFromGoogle());
+
+    // مدیریت تایمر سلامت نشستن (صندلی)
+    let chairInterval;
+    let chairTotalSeconds = 45 * 60;
+    let chairTimeLeft = chairTotalSeconds;
+    let chairIsRunning = false;
+
+    const chairDisplay = document.getElementById('chairDisplay');
+    const chairStartBtn = document.getElementById('chairStartBtn');
+    const chairTimeSelect = document.getElementById('chairTimeSelect');
+    const chairStatusText = document.getElementById('chairStatusText');
+
+    chairTimeSelect.addEventListener('change', () => {
+        if (!chairIsRunning) {
+            chairTotalSeconds = parseInt(chairTimeSelect.value) * 60;
+            chairTimeLeft = chairTotalSeconds;
+            updateChairDisplay();
+        }
+    });
+
+    function updateChairDisplay() {
+        const minutes = Math.floor(chairTimeLeft / 60);
+        const seconds = chairTimeLeft % 60;
+        chairDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function playChairAlarm() {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 1.5);
+        } catch(e) {}
+    }
+
+    function toggleChairTimer() {
+        if (!chairIsRunning) {
+            if (chairTimeLeft <= 0) chairTimeLeft = parseInt(chairTimeSelect.value) * 60;
+            chairIsRunning = true;
+            chairStartBtn.textContent = 'توقف / ریست';
+            chairStartBtn.style.background = '#ef4444';
+            chairTimeSelect.disabled = true;
+            chairStatusText.textContent = 'در حال شمارش... آماده بلند شدن باشید';
+
+            chairInterval = setInterval(() => {
+                chairTimeLeft--;
+                updateChairDisplay();
+                if (chairTimeLeft <= 0) {
+                    clearInterval(chairInterval);
+                    playChairAlarm();
+                    chairStatusText.textContent = '⚠️ وقت استراحت و کشش عضلات است!';
+                    if (window.Telegram?.WebApp?.HapticFeedback) {
+                        window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
+                    }
+                    alert('وقت تمام شد! لطفاً از روی صندلی بلند شوید و کمی قدم بزنید.');
+                    resetChairTimer();
+                }
+            }, 1000);
+        } else {
+            resetChairTimer();
+        }
+    }
+
+    function resetChairTimer() {
+        clearInterval(chairInterval);
+        chairIsRunning = false;
+        chairTotalSeconds = parseInt(chairTimeSelect.value) * 60;
+        chairTimeLeft = chairTotalSeconds;
+        updateChairDisplay();
+        chairStartBtn.textContent = 'شروع تایمر';
+        chairStartBtn.style.background = '#2563eb';
+        chairTimeSelect.disabled = false;
+        chairStatusText.textContent = 'آماده به کار';
+    }
+
+    updateChairDisplay();
+
+    // مدیریت مدال‌ها
+    const tasksCardBtn = document.getElementById('tasksCardBtn');
+    const tasksModal = document.getElementById('tasksModal');
+    let lastTaskItems = [];
+
+    tasksCardBtn.addEventListener('click', () => tasksModal.classList.add('active'));
+    function closeTasksModal() { tasksModal.classList.remove('active'); }
+
+    const debtCardBtn = document.getElementById('debtCardBtn');
+    const debtModal = document.getElementById('debtModal');
+    let lastDebtTasks = [];
+
+    debtCardBtn.addEventListener('click', () => debtModal.classList.add('active'));
+    function closeDebtModal() { debtModal.classList.remove('active'); }
+
+    const vibrationCardBtn = document.getElementById('vibrationCardBtn');
+    const vibrationModal = document.getElementById('vibrationModal');
+    let lastVibrationTasks = [];
+
+    vibrationCardBtn.addEventListener('click', () => vibrationModal.classList.add('active'));
+    function closeVibrationModal() { vibrationModal.classList.remove('active'); }
+
+    // مدال و مدیریت مالی
+    const financialModal = document.getElementById('financialModal');
+    function openFinancialModal() {
+        document.getElementById('inputIncome').value = localStorage.getItem('fin_income') || '60';
+        document.getElementById('inputExpense').value = localStorage.getItem('fin_expense') || '40';
+        document.getElementById('inputReceivable').value = localStorage.getItem('fin_receivable') || '50';
+        document.getElementById('inputLiability').value = localStorage.getItem('fin_liability') || '30';
+        document.getElementById('inputInvestment').value = localStorage.getItem('fin_investment') || '50';
+        financialModal.classList.add('active');
+    }
+    function closeFinancialModal() { financialModal.classList.remove('active'); }
+
+    function saveFinancialSettings() {
+        const income = Math.min(100, Math.max(0, parseInt(document.getElementById('inputIncome').value) || 0));
+        const expense = Math.min(100, Math.max(0, parseInt(document.getElementById('inputExpense').value) || 0));
+        const receivable = Math.min(100, Math.max(0, parseInt(document.getElementById('inputReceivable').value) || 0));
+        const liability = Math.min(100, Math.max(0, parseInt(document.getElementById('inputLiability').value) || 0));
+        const investment = Math.min(100, Math.max(0, parseInt(document.getElementById('inputInvestment').value) || 0));
+
+        localStorage.setItem('fin_income', income);
+        localStorage.setItem('fin_expense', expense);
+        localStorage.setItem('fin_receivable', receivable);
+        localStorage.setItem('fin_liability', liability);
+        localStorage.setItem('fin_investment', investment);
+
+        updateFinancialUI();
+        closeFinancialModal();
+    }
+
+    function updateFinancialUI() {
+        const income = parseInt(localStorage.getItem('fin_income') || '60');
+        const expense = parseInt(localStorage.getItem('fin_expense') || '40');
+        const receivable = parseInt(localStorage.getItem('fin_receivable') || '50');
+        const liability = parseInt(localStorage.getItem('fin_liability') || '30');
+        const investment = parseInt(localStorage.getItem('fin_investment') || '50');
+
+        const circumference = 263.89;
+
+        document.getElementById('incomeCircleProgress').style.strokeDashoffset = circumference - (income / 100) * circumference;
+        document.getElementById('incomePercentText').textContent = `${income}%`;
+
+        document.getElementById('expenseCircleProgress').style.strokeDashoffset = circumference - (expense / 100) * circumference;
+        document.getElementById('expensePercentText').textContent = `${expense}%`;
+
+        document.getElementById('receivableCircleProgress').style.strokeDashoffset = circumference - (receivable / 100) * circumference;
+        document.getElementById('receivablePercentText').textContent = `${receivable}%`;
+
+        document.getElementById('liabilityCircleProgress').style.strokeDashoffset = circumference - (liability / 100) * circumference;
+        document.getElementById('liabilityPercentText').textContent = `${liability}%`;
+
+        document.getElementById('investmentCircleProgress').style.strokeDashoffset = circumference - (investment / 100) * circumference;
+        document.getElementById('investmentPercentText').textContent = `${investment}%`;
+    }
+
+    function processTasksManagementData(taskItems) {
+        lastTaskItems = taskItems || [];
+        const total = lastTaskItems.length;
+
+        const todayKey = new Date().toDateString();
+        let taskState = JSON.parse(localStorage.getItem('task_mgmt_state') || '{}');
+        if (taskState.date !== todayKey) {
+            taskState = { date: todayKey, completed: {} };
+            localStorage.setItem('task_mgmt_state', JSON.stringify(taskState));
+        }
+
+        if (total === 0) {
+            document.getElementById('tasksCircleProgress').style.strokeDashoffset = 263.89;
+            document.getElementById('tasksPercentText').textContent = '0%';
+            document.getElementById('tasksModalContent').innerHTML = `<div>هیچ تسکی برای امروز در گوگل تسک یافت نشد.</div>`;
+            return;
+        }
+
+        let completedCount = 0;
+        let modalHtml = `<div style="margin-bottom:8px; font-weight:700; color:#2563eb;">لیست تسک‌های فعال امروز (${total} مورد - برای تیک زدن کلیک کنید):</div><ul style="padding-right:16px; list-style:none;">`;
+
+        lastTaskItems.forEach(t => {
+            const taskId = t.id || t.title;
+            const isDone = !!taskState.completed[taskId];
+            if (isDone) completedCount++;
+
+            modalHtml += `
+                <li style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; background:var(--item-bg); border:1px solid var(--border-color); padding:8px 10px; border-radius:10px; cursor:pointer;" onclick="toggleTaskManagementItem('${encodeURIComponent(taskId)}')">
+                    <span style="display:flex; align-items:center; gap:6px;">
+                        <span>${isDone ? '✅' : '⏳'}</span>
+                        <span style="${isDone ? 'text-decoration: line-through; color:var(--text-sub);' : ''}">${(t.title || '').replace(/^📌\s*/, '')}</span>
+                    </span>
+                    <span class="task-time">${t.time || 'امروز'}</span>
+                </li>`;
+        });
+        modalHtml += `</ul>`;
+
+        let tasksRatio = Math.round((completedCount / total) * 100);
+
+        const circumference = 263.89;
+        const offset = circumference - (tasksRatio / 100) * circumference;
+        document.getElementById('tasksCircleProgress').style.strokeDashoffset = offset;
+        document.getElementById('tasksPercentText').textContent = `${tasksRatio}%`;
+        document.getElementById('tasksModalContent').innerHTML = modalHtml;
+    }
+
+    function toggleTaskManagementItem(encodedId) {
+        const taskId = decodeURIComponent(encodedId);
+        const todayKey = new Date().toDateString();
+        let taskState = JSON.parse(localStorage.getItem('task_mgmt_state') || '{}');
+        if (taskState.date !== todayKey) {
+            taskState = { date: todayKey, completed: {} };
+        }
+        taskState.completed[taskId] = !taskState.completed[taskId];
+        localStorage.setItem('task_mgmt_state', JSON.stringify(taskState));
+        processTasksManagementData(lastTaskItems);
+    }
+
+    function processDebtData(taskItems) {
+        lastDebtTasks = (taskItems || []).filter(item => {
+            const t = (item.title || '').toLowerCase();
+            return t.includes('بدهی') || t.includes('طلب') || t.includes('قرض') || t.includes('چک') || t.includes('وام') || t.includes('کیانوش') || t.includes('کاووس') || t.includes('امیر');
+        });
+
+        const totalTasks = (taskItems || []).length;
+        const debtCount = lastDebtTasks.length;
+        let debtRatio = totalTasks > 0 ? Math.round((debtCount / Math.max(1, totalTasks)) * 100) : 0;
+        if (debtRatio > 100) debtRatio = 100;
+
+        const circumference = 263.89;
+        const offset = circumference - (debtRatio / 100) * circumference;
+        document.getElementById('debtCircleProgress').style.strokeDashoffset = offset;
+        document.getElementById('debtPercentText').textContent = `${debtRatio}%`;
+
+        let modalHtml = "";
+        if (debtCount > 0) {
+            modalHtml = `<div style="margin-bottom:8px; font-weight:700; color:#dc2626;">تسک‌های بدهی و طلب (${debtCount} مورد):</div><ul style="padding-right:16px;">`;
+            lastDebtTasks.forEach(dt => {
+                modalHtml += `<li style="margin-bottom:6px;">${dt.title.replace(/^📌\s*/, '')} (${dt.time || 'امروز'})</li>`;
+            });
+            modalHtml += `</ul>`;
+        } else {
+            modalHtml = `<div>هیچ تسک بازی با عنوان بدهی یا طلب یافت نشد.</div>`;
+        }
+        document.getElementById('debtModalContent').innerHTML = modalHtml;
+    }
+
+    function processVibrationData(taskItems) {
+        const keywords = ['مدیتیشن', 'پیاده', 'ورزش', 'آب', 'شکرگزاری', 'مطالعه', 'موزیک', 'استراحت', 'کتاب', 'تنفس', 'پیاده‌روی'];
+        
+        const vibItems = (taskItems || []).filter(item => {
+            const t = (item.title || '').toLowerCase();
+            return keywords.some(k => t.includes(k));
+        });
+
+        const todayKey = new Date().toDateString();
+        let vibState = JSON.parse(localStorage.getItem('vibration_state') || '{}');
+        if (vibState.date !== todayKey) {
+            vibState = { date: todayKey, completed: {} };
+            localStorage.setItem('vibration_state', JSON.stringify(vibState));
+        }
+
+        lastVibrationTasks = vibItems;
+        const totalVib = vibItems.length;
+
+        if (totalVib === 0) {
+            document.getElementById('vibrationCircleProgress').style.strokeDashoffset = 263.89;
+            document.getElementById('vibrationPercentText').textContent = '0%';
+            document.getElementById('vibrationModalContent').innerHTML = `
+                <div>هیچ تسک ارتعاشی با کلمات کلیدی (مدیتیشن، پیاده‌روی، آب، ورزش، شکرگزاری و...) در گوگل تسک یافت نشد.</div>
+                <div style="margin-top:8px; color:var(--text-sub);">تسک‌های حال‌خوب‌کن خود را در گوگل تسک ثبت کنید تا در اینجا مدیریت شوند.</div>
+            `;
+            return;
+        }
+
+        let completedCount = 0;
+        let modalHtml = `<div style="margin-bottom:8px; font-weight:700; color:#10b981;">تسک‌های ارتعاش روزانه (برای تیک زدن کلیک کنید):</div><ul style="padding-right:16px; list-style:none;">`;
+
+        vibItems.forEach((vt) => {
+            const taskId = vt.id || vt.title;
+            const isDone = !!vibState.completed[taskId];
+            if (isDone) completedCount++;
+
+            modalHtml += `
+                <li style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; background:var(--item-bg); border:1px solid var(--border-color); padding:8px 10px; border-radius:10px; cursor:pointer;" onclick="toggleVibrationTask('${encodeURIComponent(taskId)}')">
+                    <span style="display:flex; align-items:center; gap:6px;">
+                        <span>${isDone ? '✅' : '⏳'}</span>
+                        <span style="${isDone ? 'text-decoration: line-through; color:var(--text-sub);' : ''}">${vt.title.replace(/^📌\s*/, '')}</span>
+                    </span>
+                    <span class="task-time">${vt.time || 'امروز'}</span>
+                </li>`;
+        });
+        modalHtml += `</ul>`;
+
+        const vibrationRatio = Math.round((completedCount / totalVib) * 100);
+        const circumference = 263.89;
+        const offset = circumference - (vibrationRatio / 100) * circumference;
+        document.getElementById('vibrationCircleProgress').style.strokeDashoffset = offset;
+        document.getElementById('vibrationPercentText').textContent = `${vibrationRatio}%`;
+        document.getElementById('vibrationModalContent').innerHTML = modalHtml;
+    }
+
+    function toggleVibrationTask(encodedId) {
+        const taskId = decodeURIComponent(encodedId);
+        const todayKey = new Date().toDateString();
+        let vibState = JSON.parse(localStorage.getItem('vibration_state') || '{}');
+        if (vibState.date !== todayKey) {
+            vibState = { date: todayKey, completed: {} };
+        }
+        vibState.completed[taskId] = !vibState.completed[taskId];
+        localStorage.setItem('vibration_state', JSON.stringify(vibState));
+        processVibrationData(lastVibrationTasks);
+    }
+
+    const energyCardBtn = document.getElementById('energyCardBtn');
+    const energyModal = document.getElementById('energyModal');
+    energyCardBtn.addEventListener('click', () => energyModal.classList.add('active'));
+    function closeEnergyModal() { energyModal.classList.remove('active'); }
+
+    function setManualEnergy(val, label) {
+        localStorage.setItem('manual_energy_val', val);
+        localStorage.setItem('manual_energy_date', new Date().toDateString());
+        document.getElementById('energyPercentText').nextElementSibling.textContent = 'انرژی مغز';
+        closeEnergyModal();
+        updateTimer();
+    }
+
+    function resetManualEnergy() {
+        localStorage.removeItem('manual_energy_val');
+        localStorage.removeItem('manual_energy_date');
+        closeEnergyModal();
+        updateTimer();
+    }
+
+    const personalModal = document.getElementById('personalModal');
+    document.getElementById('personalSettingsBtn').addEventListener('click', openPersonalModal);
+
+    function openPersonalModal() {
+        const todayKey = new Date().toDateString();
+        if (localStorage.getItem('settings_date') === todayKey) {
+            document.getElementById('inputOneThing').value = localStorage.getItem('one_thing') || '';
+            document.getElementById('inputWorkMode').value = localStorage.getItem('work_mode') || 'deep';
+            document.getElementById('inputSleepHours').value = localStorage.getItem('sleep_hours') || '7';
+            document.getElementById('inputStressLevel').value = localStorage.getItem('stress_level') || 'normal';
+            document.getElementById('inputProjectFocus').value = localStorage.getItem('project_focus') || 'sepand';
+        }
+        personalModal.classList.add('active');
+    }
+
+    function closePersonalModal() { personalModal.classList.remove('active'); }
+
+    function savePersonalSettings() {
+        localStorage.setItem('settings_date', new Date().toDateString());
+        localStorage.setItem('one_thing', document.getElementById('inputOneThing').value.trim());
+        localStorage.setItem('work_mode', document.getElementById('inputWorkMode').value);
+        localStorage.setItem('sleep_hours', document.getElementById('inputSleepHours').value);
+        localStorage.setItem('stress_level', document.getElementById('inputStressLevel').value);
+        localStorage.setItem('project_focus', document.getElementById('inputProjectFocus').value);
+        updatePersonalUI();
+        closePersonalModal();
+        updateTimer();
+    }
+
+    function updatePersonalUI() {
+        const oneThing = localStorage.getItem('one_thing');
+        const displayEl = document.getElementById('displayOneThing');
+        if (oneThing) {
+            displayEl.textContent = oneThing;
+            displayEl.style.color = 'var(--text-main)';
+        } else {
+            displayEl.textContent = 'هنوز تعییین نشده است (کلیک برای ثبت)';
+            displayEl.style.color = 'var(--text-sub)';
+        }
+    }
+
+    function updateCoachingAdvice(taskCount, eventCount) {
+        const workMode = localStorage.getItem('work_mode') || 'deep';
+        const stressLevel = localStorage.getItem('stress_level') || 'normal';
+        const projectFocus = localStorage.getItem('project_focus') || 'sepand';
+
+        let modeText = workMode === 'meetings' ? "روز جلسات و ارتباطات 🤝" : workMode === 'recovery' ? "روز سبک و ریکاوری 🌿" : "حالت کار عمیق 💻";
+        let stressText = stressLevel === 'stressed' ? `⚠️ استرس بالا گزارش شده است. تنفس عمیق فراموش نشود.` : `🔹 وضعیت ذهنی متمرکز روی پروژه (${projectFocus}).`;
+
+        document.getElementById('coachingText').innerHTML = `
+            <div>📌 <b>مدیریت تسک‌ها و زمان:</b> حالت امروز: ${modeText}. تعداد تسک‌ها: ${taskCount}</div>
+            <div style="margin-top: 6px;">${stressText}</div>
+            <span class="coaching-section-title">📊 وضعیت مالی و ارتعاش:</span>
+            <div>تعداد ${lastDebtTasks.length} تسک مالی و ${lastVibrationTasks.length} تسک ارتعاش مثبت شناسایی شد.</div>
+        `;
+    }
+
+    function loadTasksFromGoogle() {
+        const calendarListDiv = document.getElementById('calendarList');
+        const taskListDiv = document.getElementById('taskList');
+        const refreshStatus = document.getElementById('refreshStatus');
+        const callbackName = 'handleGoogleTasksResponse';
+
+        refreshBtn.style.transform = 'rotate(360deg)';
+        setTimeout(() => refreshBtn.style.transform = 'none', 500);
+
+        const timeoutId = setTimeout(() => {
+            if (calendarListDiv.innerHTML.includes('بارگذاری')) {
+                calendarListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">خطای ارتباط با سرور</div>';
+                taskListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">برای تلاش مجدد کلیک کنید</div>';
+                refreshStatus.textContent = 'عدم دریافت پاسخ از سرور گوگل.';
+            }
+        }, 6000);
+
+        window[callbackName] = function(res) {
+            clearTimeout(timeoutId);
+            calendarListDiv.innerHTML = '';
+            taskListDiv.innerHTML = '';
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            refreshStatus.textContent = `آخرین بروزرسانی: ساعت ${timeStr}`;
+
+            let calendarItems = [];
+            let taskItems = [];
+            let taskStats = { completed: 0, total: 0, score: 0 };
+
+            try {
+                if (Array.isArray(res)) {
+                    calendarItems = res.filter(item => item && item.title && !item.title.startsWith('📌'));
+                    taskItems = res.filter(item => item && item.title && item.title.startsWith('📌'));
+                    taskStats.total = taskItems.length;
+                } else if (res && typeof res === 'object') {
+                    calendarItems = res.events || [];
+                    taskItems = res.tasks || [];
+                    if (res.taskStats) taskStats = res.taskStats;
+                }
+            } catch(e) {}
+
+            document.getElementById('taskStatsStatus').textContent = taskStats.total || taskItems.length;
+            processTasksManagementData(taskItems);
+            processDebtData(taskItems);
+            processVibrationData(taskItems);
+            updateCoachingAdvice(taskStats.total || taskItems.length, calendarItems.length);
+
+            const eventCount = calendarItems.length;
+            let loadText = eventCount === 0 ? "روز آزاد و خلوت 🍃" : eventCount >= 4 ? "روز فشرده و پرکار 🔥" : "تقویم متعادل ⚖️";
+            document.getElementById('calendarLoadStatus').textContent = loadText;
+
+            if (calendarItems.length === 0) {
+                calendarListDiv.innerHTML = '<div class="empty-text">رویدادی برای امروز ثبت نشده است.</div>';
+            } else {
+                calendarItems.forEach(item => {
+                    const el = document.createElement('a');
+                    el.className = 'task-item';
+                    el.href = 'https://calendar.google.com';
+                    el.target = '_blank';
+                    el.innerHTML = `<span>${item.title || ''}</span> <span class="task-time">${item.time || ''}</span>`;
+                    calendarListDiv.appendChild(el);
+                });
+            }
+
+            if (taskItems.length === 0) {
+                taskListDiv.innerHTML = '<div class="empty-text">تسک فعالی وجود ندارد.</div>';
+            } else {
+                taskItems.forEach(item => {
+                    const cleanTitle = (item.title || '').replace(/^📌\s*/, '');
+                    const el = document.createElement('a');
+                    el.className = 'task-item';
+                    el.href = 'https://tasks.google.com';
+                    el.target = '_blank';
+                    el.innerHTML = `<span>${cleanTitle}</span> <span class="task-time">${item.time || 'تسک'}</span>`;
+                    taskListDiv.appendChild(el);
+                });
+            }
+        };
+
+        const oldScript = document.getElementById('gasScript');
+        if (oldScript) oldScript.remove();
+
+        const script = document.createElement('script');
+        script.id = 'gasScript';
+        script.src = `${GAS_URL}?callback=${callbackName}`;
+        script.onerror = function() {
+            clearTimeout(timeoutId);
+            calendarListDiv.innerHTML = '<div class="empty-text" style="color:#dc2626;">خطا در ارتباط</div>';
+            taskListDiv.innerHTML = '<div class="empty-text" style="color:#dc2626;">خطا در ارتباط</div>';
+            refreshStatus.textContent = 'خطا در ارتباط با اسکریپت گوگل.';
+        };
+        document.body.appendChild(script);
+    }
+
+    function updateQuote() {
+        const hour = new Date().getHours();
+        document.getElementById('timeQuote').textContent = quotes[Math.floor(hour / 5) % quotes.length];
+    }
+
+    function updateTimer() {
+        const now = new Date();
+        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+            
+        const totalDayMs = 24 * 60 * 60 * 1000;
+        const elapsedMs = now - startOfDay;
+        const remainingMs = Math.max(0, endOfDay - now);
+        const percent = Math.min(100, (elapsedMs / totalDayMs) * 100);
+
+        const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
+        const clockStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        const remainingStr = `${String(Math.floor((remainingMs / (1000 * 60 * 60)) % 24)).padStart(2, '0')}:${String(Math.floor((remainingMs / (1000 * 60)) % 60)).padStart(2, '0')}:${String(Math.floor((remainingMs / 1000) % 60)).padStart(2, '0')}`;
+        const elapsedStr = `${String(Math.floor((elapsedMs / (1000 * 60 * 60)) % 24)).padStart(2, '0')}:${String(Math.floor((elapsedMs / (1000 * 60)) % 60)).padStart(2, '0')}`;
+
+        document.getElementById('currentClock').textContent = clockStr;
+        document.getElementById('elapsedTime').textContent = elapsedStr;
+        document.getElementById('remainingTime').textContent = remainingStr;
+        document.getElementById('elapsedTimeStat').textContent = elapsedStr;
+
+        let phaseText = h >= 6 && h < 12 ? "صبح؛ فاز تمرکز و خلق" : h >= 12 && h < 17 ? "ظهر؛ فاز اجرای عمیق" : h >= 17 && h < 22 ? "عصر؛ فاز تثبیت و بازبینی" : "استراحت و آرامش";
+        document.getElementById('dayPhase').textContent = phaseText;
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', calendar: 'persian' };
+        document.getElementById('currentDateTitle').textContent = new Intl.DateTimeFormat('fa-IR', options).format(now);
+
+        const startOfYear = new Date(now.getFullYear(), 2, 21);
+        let dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
+        if (dayOfYear < 1) dayOfYear += 365;
+
+        let seasonName = "پاییز 🍂", seasonIcon = "🍂";
+        if (dayOfYear <= 93) { seasonName = "بهار 🌸"; seasonIcon = "🌸"; }
+        else if (dayOfYear <= 186) { seasonName = "تابستان ☀️"; seasonIcon = "☀️"; }
+        else if (dayOfYear <= 276) { seasonName = "پاییز 🍂"; seasonIcon = "🍂"; }
+        else { seasonName = "زمستان ❄️"; seasonIcon = "❄️"; }
+
+        document.getElementById('dayOfYearText').textContent = `روزشمار سال: روز ${dayOfYear} از ۳۶۵`;
+        document.getElementById('seasonBadge').textContent = seasonName;
+        document.getElementById('dateIcon').textContent = seasonIcon;
+
+        const featuredCircumference = 251.33;
+        document.getElementById('timeCircleProgress').style.strokeDashoffset = featuredCircumference - (percent / 100) * featuredCircumference;
+        document.getElementById('timeProgressPercent').textContent = `${percent.toFixed(1)}%`;
+
+        let energyPercent = 50;
+        const savedEnergyVal = localStorage.getItem('manual_energy_val');
+        if (savedEnergyVal && localStorage.getItem('manual_energy_date') === now.toDateString()) {
+            energyPercent = parseFloat(savedEnergyVal);
+        } else {
+            let baseEnergy = h >= 6 && h < 12 ? 60 + ((h - 6) / 6) * 40 : h >= 12 && h < 15 ? 65 : h >= 15 && h < 19 ? 75 : h >= 19 && h < 23 ? 45 : 20;
+            let sleepMult = parseInt(localStorage.getItem('sleep_hours') || '7') >= 8 ? 1.1 : 1.0;
+            let stressVal = localStorage.getItem('stress_level') || 'normal';
+            let stressMult = stressVal === 'calm' ? 1.05 : stressVal === 'stressed' ? 0.8 : 1.0;
+            energyPercent = Math.min(100, Math.max(10, baseEnergy * sleepMult * stressMult));
+        }
+
+        const circumference = 263.89;
+        document.getElementById('energyCircleProgress').style.strokeDashoffset = circumference - (energyPercent / 100) * circumference;
+        document.getElementById('energyPercentText').textContent = `${Math.round(energyPercent)}%`;
+    }
+
+    updatePersonalUI();
+    updateFinancialUI();
+    updateQuote();
+    setInterval(updateTimer, 1000);
+    updateTimer();
+    loadTasksFromGoogle();
+    setInterval(loadTasksFromGoogle, 5 * 60 * 1000);
+</script>
+</body>
+</html>
