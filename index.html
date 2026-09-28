@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ارزش زمان - مینی اپ تلگرام</title>
+    <title>سکان - مینی اپ تلگرام</title>
     <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
@@ -68,11 +68,82 @@
             box-shadow: var(--box-shadow);
             position: relative;
         }
-        .header-top {
+        /* ===== Header ===== */
+        .app-header {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 55%, #db2777 100%);
+            box-shadow: 0 16px 32px -10px rgba(79, 70, 229, 0.45), inset 0 1px 0 rgba(255,255,255,0.35);
+        }
+        [data-theme="dark"] .app-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #5b21b6 55%, #9d174d 100%);
+            box-shadow: 0 16px 32px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.12);
+        }
+        .app-header::before, .app-header::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .app-header::before {
+            width: 180px; height: 180px;
+            top: -70px; left: -50px;
+            background: radial-gradient(circle, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 70%);
+        }
+        .app-header::after {
+            width: 150px; height: 150px;
+            bottom: -80px; right: -30px;
+            background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%);
+        }
+        .app-header-top {
+            position: relative;
+            z-index: 1;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .app-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+        .app-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.5);
+            animation: logoFloat 3.5s ease-in-out infinite;
+        }
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        .app-title {
+            font-size: 1.25rem;
+            font-weight: 900;
+            letter-spacing: 0.3px;
+            line-height: 1.2;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .app-greeting {
+            font-size: 0.78rem;
+            font-weight: 500;
+            opacity: 0.92;
+            margin-top: 2px;
         }
         .header-controls {
             display: flex;
@@ -80,9 +151,9 @@
             gap: 8px;
         }
         .icon-btn {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.35);
+            color: #ffffff;
             width: 38px;
             height: 38px;
             border-radius: 12px;
@@ -90,93 +161,61 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             user-select: none;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.2);
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.35);
+            transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.12s ease;
         }
         .icon-btn:hover {
-            background: var(--item-hover);
+            background: rgba(255,255,255,0.3);
             transform: translateY(-2px);
-            box-shadow: 0 6px 10px -2px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 14px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.45);
         }
         .icon-btn:active {
             transform: translateY(1px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
         .day-phase {
-            font-size: 0.8rem;
-            color: #2563eb;
-            background: #eff6ff;
-            border: 1px solid #dbeafe;
-            padding: 6px 14px;
-            border-radius: 99px;
-            font-weight: 600;
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
-        }
-        [data-theme="dark"] .day-phase {
-            color: #60a5fa;
-            background: #1e3a8a;
-            border-color: #1e40af;
-        }
-        .date-widget-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 14px 18px;
-            display: flex;
-            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
             align-items: center;
-            margin-bottom: 20px;
-            box-shadow: var(--card-3d);
-        }
-        .date-info-main {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .date-icon {
-            font-size: 1.6rem;
-            background: #eff6ff;
-            width: 45px;
-            height: 45px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
-        }
-        [data-theme="dark"] .date-icon {
-            background: #1e3a8a;
-        }
-        .date-text-group .date-title {
-            font-size: 0.9rem;
+            gap: 6px;
+            margin-top: 14px;
+            font-size: 0.78rem;
             font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 2px;
-        }
-        .date-text-group .date-subtitle {
-            font-size: 0.73rem;
-            color: var(--text-sub);
-            font-weight: 500;
-        }
-        .season-badge {
-            font-size: 0.75rem;
-            color: #d97706;
-            background: #fef3c7;
-            border: 1px solid #fde68a;
+            color: #ffffff;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.4);
             padding: 6px 14px;
             border-radius: 99px;
-            font-weight: 600;
-            white-space: nowrap;
-            box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15);
+            backdrop-filter: blur(6px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
         }
-        [data-theme="dark"] .season-badge {
-            color: #fbbf24;
-            background: #451a03;
-            border-color: #78350f;
+        .day-phase::before {
+            content: '';
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #fde68a;
+            box-shadow: 0 0 0 0 rgba(253, 230, 138, 0.7);
+            animation: phasePulse 2s infinite;
         }
-        
+        @keyframes phasePulse {
+            0% { box-shadow: 0 0 0 0 rgba(253, 230, 138, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(253, 230, 138, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(253, 230, 138, 0); }
+        }
+        @media (max-width: 480px) {
+            .app-header { padding: 14px; }
+            .app-logo { width: 42px; height: 42px; font-size: 1.4rem; }
+            .app-title { font-size: 1.1rem; }
+            .icon-btn { width: 34px; height: 34px; border-radius: 10px; }
+            .header-controls { gap: 6px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .app-logo, .day-phase::before, .status-dot { animation: none; }
+        }
         .digital-clock-card {
             background: var(--clock-bg);
             border: 1px solid var(--border-color);
@@ -201,7 +240,7 @@
             line-height: 1.1;
             text-shadow: 0 2px 10px rgba(0,0,0,0.06);
         }
-        
+
         .time-info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -237,77 +276,6 @@
             color: #dc2626;
         }
 
-        /* نمودار بزرگ و برجسته روند امروز */
-        .featured-time-card {
-            background: var(--box-bg);
-            border: 2px solid #2563eb;
-            border-radius: 20px;
-            padding: 18px;
-            text-align: center;
-            margin-bottom: 16px;
-            box-shadow: 0 12px 30px -6px rgba(37, 99, 235, 0.2), inset 0 1px 0 rgba(255,255,255,0.4);
-        }
-        .featured-time-title {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #2563eb;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .featured-time-wrapper {
-            position: relative;
-            width: 140px;
-            height: 140px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .featured-circular-chart {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-            filter: drop-shadow(0 4px 8px rgba(37, 99, 235, 0.2));
-        }
-        .featured-circle-bg {
-            fill: none;
-            stroke: var(--border-color);
-            stroke-width: 10;
-        }
-        .featured-circle-progress {
-            fill: none;
-            stroke-width: 10;
-            stroke-linecap: round;
-            stroke-dasharray: 251.33;
-            stroke-dashoffset: 251.33;
-            transition: stroke-dashoffset 1s linear;
-            stroke: url(#timeChartGradient);
-        }
-        .featured-chart-content {
-            position: absolute;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .featured-percent-text {
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--text-main);
-            font-variant-numeric: tabular-nums;
-            line-height: 1;
-        }
-        .featured-percent-label {
-            font-size: 0.7rem;
-            color: var(--text-sub);
-            margin-top: 4px;
-            font-weight: 600;
-        }
-
-        /* گرید نمودارها */
         .charts-grid-4 {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -322,23 +290,6 @@
         @media (max-width: 480px) {
             .charts-grid-4 {
                 grid-template-columns: 1fr;
-            }
-        }
-        
-        .charts-grid-5 {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 1024px) {
-            .charts-grid-5 {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        @media (max-width: 600px) {
-            .charts-grid-5 {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
 
@@ -402,11 +353,6 @@
         .circle-progress.debt-progress { stroke: #dc2626; }
         .circle-progress.vibration-progress { stroke: #10b981; }
 
-        .circle-progress.income-progress { stroke: #10b981; }
-        .circle-progress.expense-progress { stroke: #ef4444; }
-        .circle-progress.receivable-progress { stroke: #3b82f6; }
-        .circle-progress.liability-progress { stroke: #d97706; }
-        .circle-progress.investment-progress { stroke: #8b5cf6; }
 
         .chart-content {
             position: absolute;
@@ -440,34 +386,78 @@
             color: var(--text-main);
         }
 
-        .onething-card {
+        .box-card {
             background: var(--box-bg);
             border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 14px 18px;
+            border-radius: 20px;
+            padding: 16px;
             margin-bottom: 20px;
+            box-shadow: var(--card-3d);
+        }
+        .box-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--card-3d);
+            gap: 8px;
+            margin-bottom: 12px;
         }
-        .onething-info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            flex-grow: 1;
-            margin-left: 12px;
-        }
-        .onething-label {
-            font-size: 0.72rem;
-            color: #d97706;
-            font-weight: 700;
-        }
-        .onething-value {
-            font-size: 0.85rem;
-            font-weight: 700;
+        .box-title {
+            font-size: 0.9rem;
+            font-weight: 800;
             color: var(--text-main);
         }
+        .box-date {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            font-weight: 600;
+        }
+        .time-rings {
+            margin-bottom: 0;
+            grid-template-columns: repeat(4, 1fr);
+        }
+        @media (max-width: 900px) {
+            .time-rings { grid-template-columns: repeat(2, 1fr); }
+        }
+        .time-rings .chart-card { background: var(--item-bg); }
+        .ring-value {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+        .ring-sub {
+            font-size: 0.68rem;
+            color: var(--text-sub);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+        .circle-progress.year-progress { stroke: #2563eb; }
+        .circle-progress.season-progress { stroke: #d97706; }
+        .circle-progress.month-progress { stroke: #10b981; }
+        .circle-progress.day-progress { stroke: #8b5cf6; }
+        .day-box .digital-clock-card,
+        .day-box .time-info-card { background: var(--item-bg); }
+        .day-box .time-info-grid { margin-bottom: 0; }
+
+        .mgmt-rings { margin-bottom: 0; }
+        .mgmt-rings .chart-card { background: var(--item-bg); }
+        .box-right { display: flex; align-items: center; gap: 10px; }
+        details.collapsible > summary {
+            list-style: none;
+            cursor: pointer;
+            user-select: none;
+            margin-bottom: 0;
+        }
+        details.collapsible > summary::-webkit-details-marker { display: none; }
+        details.collapsible[open] > summary { margin-bottom: 12px; }
+        .collapse-arrow {
+            font-size: 1rem;
+            color: var(--text-sub);
+            transition: transform 0.2s ease;
+        }
+        details.collapsible:not([open]) .collapse-arrow { transform: rotate(90deg); }
+        .collapsible-body .google-services-grid { border-top: none; padding-top: 0; }
+        .collapsible-body .service-column { background: var(--item-bg); }
         .action-sm-btn {
             background: #2563eb;
             color: #ffffff;
@@ -491,140 +481,6 @@
             box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
         }
 
-        .chair-timer-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: var(--card-3d);
-        }
-        .chair-timer-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .chair-timer-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .chair-status {
-            font-size: 0.72rem;
-            color: var(--text-sub);
-            font-weight: 500;
-        }
-        .chair-timer-body {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        @media (max-width: 480px) {
-            .chair-timer-body {
-                flex-direction: column;
-                gap: 12px;
-                text-align: center;
-            }
-        }
-        .chair-display {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--text-main);
-            font-variant-numeric: tabular-nums;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .chair-controls-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quote-box {
-            background: var(--box-bg);
-            border-right: 4px solid #2563eb;
-            border-top: 1px solid var(--border-color);
-            border-left: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            padding: 12px 16px;
-            border-radius: 0 14px 14px 0;
-            margin-bottom: 20px;
-            font-size: 0.82rem;
-            color: var(--text-main);
-            line-height: 1.6;
-            font-weight: 500;
-            box-shadow: var(--card-3d);
-        }
-        .coaching-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 20px;
-            box-shadow: var(--card-3d);
-        }
-        .coaching-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #2563eb;
-            margin-bottom: 10px;
-        }
-        [data-theme="dark"] .coaching-header {
-            color: #60a5fa;
-        }
-        .coaching-body {
-            font-size: 0.8rem;
-            color: var(--text-main);
-            line-height: 1.7;
-            font-weight: 500;
-        }
-        .coaching-section-title {
-            font-weight: 700;
-            color: #059669;
-            margin-top: 8px;
-            display: block;
-        }
-        [data-theme="dark"] .coaching-section-title {
-            color: #34d399;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 640px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        .stat-card {
-            background: var(--box-bg);
-            border: 1px solid var(--border-color);
-            padding: 14px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: var(--card-3d);
-        }
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-sub);
-            margin-bottom: 4px;
-            font-weight: 500;
-        }
-        .stat-value {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: var(--text-main);
-            font-variant-numeric: tabular-nums;
-        }
         .google-services-grid {
             border-top: 1px solid var(--border-color);
             padding-top: 16px;
@@ -708,13 +564,66 @@
             text-align: center;
             padding: 10px;
         }
-        .refresh-status {
-            font-size: 0.7rem;
-            color: var(--text-sub);
+        /* ===== Footer ===== */
+        .app-footer {
+            margin-top: 8px;
+            padding-top: 16px;
             text-align: center;
-            margin-top: 14px;
+            position: relative;
         }
-        /* Modal Styles */
+        .app-footer::before {
+            content: '';
+            display: block;
+            height: 2px;
+            margin: 0 auto 16px auto;
+            width: 60%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, transparent, #2563eb, #7c3aed, #db2777, transparent);
+            opacity: 0.55;
+        }
+        .footer-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 99px;
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            box-shadow: var(--card-3d);
+        }
+        .status-dot {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+            animation: dotPulse 2s infinite;
+        }
+        .status-dot.loading { background: #3b82f6; box-shadow: 0 0 0 0 rgba(59,130,246,0.6); }
+        .status-dot.err { background: #ef4444; animation: none; }
+        @keyframes dotPulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+        .footer-brand {
+            margin-top: 12px;
+            font-size: 0.9rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #2563eb, #7c3aed, #db2777);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+        .footer-note {
+            margin-top: 4px;
+            font-size: 0.68rem;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -838,295 +747,228 @@
 </head>
 <body>
 <div class="container">
-    <div class="header-top">
+    <header class="app-header">
+        <div class="app-header-top">
+            <div class="app-brand">
+                <div class="app-logo">⚓</div>
+                <div>
+                    <div class="app-title">سکان</div>
+                    <div class="app-greeting" id="headerGreeting">خوش آمدی</div>
+                </div>
+            </div>
+            <div class="header-controls">
+                <button class="icon-btn" id="personalSettingsBtn" title="تنظیمات فردی">⚙️</button>
+                <button class="icon-btn" id="themeBtn" title="تغییر تم">🌙</button>
+                <button class="icon-btn" id="fullscreenBtn" title="تمام‌صفحه">⛶</button>
+                <button class="icon-btn" id="refreshBtn" title="بروزرسانی">🔄</button>
+            </div>
+        </div>
         <div class="day-phase" id="dayPhase">در حال بارگذاری...</div>
-        <div class="header-controls">
-            <button class="icon-btn" id="personalSettingsBtn" title="تنظیمات فردی">⚙️</button>
-            <button class="icon-btn" id="themeBtn" title="تغییر تم">🌙</button>
-            <button class="icon-btn" id="fullscreenBtn" title="تمام‌صفحه">⛶</button>
-            <button class="icon-btn" id="refreshBtn" title="بروزرسانی">🔄</button>
-        </div>
-    </div>
+    </header>
 
-    <!-- 1. تاریخ و فصل -->
-    <div class="date-widget-card">
-        <div class="date-info-main">
-            <div class="date-icon" id="dateIcon">📅</div>
-            <div class="date-text-group">
-                <div class="date-title" id="currentDateTitle">در حال بارگذاری تاریخ...</div>
-                <div class="date-subtitle" id="dayOfYearText">روزشمار سال: --</div>
-            </div>
-        </div>
-        <div class="season-badge" id="seasonBadge">فصل: --</div>
-    </div>
-
-    <!-- 2. ساعت کنونی -->
-    <div class="digital-clock-card">
-        <div class="digital-clock-label">ساعت کنونی</div>
-        <div class="digital-clock-time" id="currentClock">--:--:--</div>
-    </div>
-
-    <!-- 3. ساعت‌های سپری شده و زمان باقیمانده -->
-    <div class="time-info-grid">
-        <div class="time-info-card">
-            <div class="time-info-label">ساعت‌های سپری شده از امروز</div>
-            <div class="time-info-value" id="elapsedTime">--:--</div>
-        </div>
-        <div class="time-info-card">
-            <div class="time-info-label">زمان باقیمانده تا پایان امروز</div>
-            <div class="time-info-value countdown" id="remainingTime">--:--:--</div>
-        </div>
-    </div>
-
-    <!-- 4. روند امروز (نمودار گرافیکی بزرگ و برجسته) -->
-    <div class="featured-time-card">
-        <div class="featured-time-title">⏳ روند امروز (مصرف زمان)</div>
-        <div class="featured-time-wrapper">
-            <svg class="featured-circular-chart" viewBox="0 0 100 100">
-                <defs>
-                    <linearGradient id="timeChartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#2563eb" />
-                        <stop offset="50%" stop-color="#d97706" />
-                        <stop offset="100%" stop-color="#dc2626" />
-                    </linearGradient>
-                </defs>
-                <circle class="featured-circle-bg" cx="50" cy="50" r="40" />
-                <circle class="featured-circle-progress" id="timeCircleProgress" cx="50" cy="50" r="40" />
-            </svg>
-            <div class="featured-chart-content">
-                <div class="featured-percent-text" id="timeProgressPercent">0%</div>
-                <div class="featured-percent-label">سپری‌شده</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 5. سایر نمودارها (انرژی، تسک‌ها، بدهی و طلب، ارتعاش روزانه) در یک ردیف -->
-    <div class="charts-grid-4">
-        <!-- انرژی مغز -->
-        <div class="chart-card interactive" id="energyCardBtn" title="تنظیم دستی انرژی">
-            <div class="chart-wrapper">
-                <svg class="circular-chart" viewBox="0 0 100 100">
-                    <defs>
-                        <linearGradient id="energyChartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#10b981" />
-                            <stop offset="50%" stop-color="#06b6d4" />
-                            <stop offset="100%" stop-color="#3b82f6" />
-                        </linearGradient>
-                    </defs>
-                    <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress energy-progress" id="energyCircleProgress" cx="50" cy="50" r="42" />
-                </svg>
-                <div class="chart-content">
-                    <div class="percent-text" id="energyPercentText">0%</div>
-                    <div class="percent-label">انرژی مغز</div>
-                </div>
-            </div>
-            <div class="chart-hint">⚡ تنظیم دستی</div>
-        </div>
-
-        <!-- مدیریت تسک‌ها -->
-        <div class="chart-card interactive" id="tasksCardBtn" title="مشاهده جزئیات تسک‌ها">
+    <!-- باکس زمان -->
+    <details class="box-card collapsible" id="timeBox" open>
+        <summary class="box-header">
+            <span class="box-title">🗓️ باکس زمان</span>
+            <span class="box-right"><span class="box-date" id="currentDateTitle">--</span><span class="collapse-arrow">▾</span></span>
+        </summary>
+        <div class="collapsible-body">
+        <div class="charts-grid-4 time-rings">
+        <div class="chart-card">
             <div class="chart-wrapper">
                 <svg class="circular-chart" viewBox="0 0 100 100">
                     <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress tasks-progress" id="tasksCircleProgress" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress year-progress" id="yearCircleProgress" cx="50" cy="50" r="42" />
                 </svg>
                 <div class="chart-content">
-                    <div class="percent-text" id="tasksPercentText">0%</div>
-                    <div class="percent-label">مدیریت تسک‌ها</div>
+                    <div class="percent-text" id="yearPercentText">0%</div>
+                    <div class="percent-label">سال</div>
                 </div>
             </div>
-            <div class="chart-hint" style="color:#2563eb;" id="tasksHintText">📌 تسک‌های فعال</div>
+            <div class="ring-value" id="yearValue">--</div>
+            <div class="ring-sub" id="yearSub">--</div>
         </div>
-
-        <!-- بدهی و طلب -->
-        <div class="chart-card interactive" id="debtCardBtn" title="مشاهده جزئیات بدهی و طلب">
+        <div class="chart-card">
             <div class="chart-wrapper">
                 <svg class="circular-chart" viewBox="0 0 100 100">
                     <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress debt-progress" id="debtCircleProgress" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress season-progress" id="seasonCircleProgress" cx="50" cy="50" r="42" />
                 </svg>
                 <div class="chart-content">
-                    <div class="percent-text" id="debtPercentText">0%</div>
-                    <div class="percent-label">بدهی و طلب</div>
+                    <div class="percent-text" id="seasonPercentText">0%</div>
+                    <div class="percent-label">فصل</div>
                 </div>
             </div>
-            <div class="chart-hint" style="color:#dc2626;" id="debtHintText">📊 تحلیل مالی</div>
+            <div class="ring-value" id="seasonValue">--</div>
+            <div class="ring-sub" id="seasonSub">--</div>
         </div>
-
-        <!-- ارتعاش روزانه -->
-        <div class="chart-card interactive" id="vibrationCardBtn" title="مشاهده جزئیات ارتعاش روزانه">
+        <div class="chart-card">
             <div class="chart-wrapper">
                 <svg class="circular-chart" viewBox="0 0 100 100">
                     <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress vibration-progress" id="vibrationCircleProgress" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress month-progress" id="monthCircleProgress" cx="50" cy="50" r="42" />
                 </svg>
                 <div class="chart-content">
-                    <div class="percent-text" id="vibrationPercentText">0%</div>
-                    <div class="percent-label">ارتعاش روزانه</div>
+                    <div class="percent-text" id="monthPercentText">0%</div>
+                    <div class="percent-label">ماه</div>
                 </div>
             </div>
-            <div class="chart-hint" style="color:#10b981;" id="vibrationHintText">✨ ارتعاش مثبت</div>
+            <div class="ring-value" id="monthValue">--</div>
+            <div class="ring-sub" id="monthSub">--</div>
         </div>
-    </div>
-
-    <!-- 6. داشبورد مالی جدید (درآمد، هزینه، طلب، بدهی، سرمایه‌گذاری) -->
-    <div class="section-title-bar">
-        <span>💰 داشبورد مالی و دارایی‌ها</span>
-        <button class="action-sm-btn" onclick="openFinancialModal()">ویرایش مالی ✏️</button>
-    </div>
-    <div class="charts-grid-5" id="financeChartsGrid">
-        <!-- 1. درآمد -->
-        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم درآمد">
+        <div class="chart-card">
             <div class="chart-wrapper">
                 <svg class="circular-chart" viewBox="0 0 100 100">
                     <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress income-progress" id="incomeCircleProgress" cx="50" cy="50" r="42" />
+                    <circle class="circle-progress day-progress" id="dayCircleProgress" cx="50" cy="50" r="42" />
                 </svg>
                 <div class="chart-content">
-                    <div class="percent-text" id="incomePercentText">0%</div>
-                    <div class="percent-label">درآمد</div>
+                    <div class="percent-text" id="dayPercentText">0%</div>
+                    <div class="percent-label">روز</div>
                 </div>
             </div>
-            <div class="chart-hint" style="color:#10b981;">💵 ورود وجه</div>
+            <div class="ring-value" id="dayValue">--</div>
+            <div class="ring-sub" id="daySub">--</div>
         </div>
+        </div>
+        </div>
+    </details>
 
-        <!-- 2. هزینه -->
-        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم هزینه">
-            <div class="chart-wrapper">
-                <svg class="circular-chart" viewBox="0 0 100 100">
-                    <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress expense-progress" id="expenseCircleProgress" cx="50" cy="50" r="42" />
-                </svg>
-                <div class="chart-content">
-                    <div class="percent-text" id="expensePercentText">0%</div>
-                    <div class="percent-label">هزینه</div>
+    <!-- باکس روز -->
+    <details class="box-card day-box collapsible" id="dayBox" open>
+        <summary class="box-header">
+            <span class="box-title">☀️ باکس روز</span>
+            <span class="box-right"><span class="collapse-arrow">▾</span></span>
+        </summary>
+        <div class="collapsible-body">
+        <div class="digital-clock-card">
+            <div class="digital-clock-label">ساعت کنونی</div>
+            <div class="digital-clock-time" id="currentClock">--:--:--</div>
+        </div>
+        <div class="time-info-grid">
+            <div class="time-info-card">
+                <div class="time-info-label">ساعت‌های سپری شده از امروز</div>
+                <div class="time-info-value" id="elapsedTime">--:--</div>
+            </div>
+            <div class="time-info-card">
+                <div class="time-info-label">زمان باقیمانده تا پایان امروز</div>
+                <div class="time-info-value countdown" id="remainingTime">--:--:--</div>
+            </div>
+        </div>
+        </div>
+    </details>
+
+    <!-- باکس مدیریت -->
+    <details class="box-card collapsible" id="mgmtBox" open>
+        <summary class="box-header">
+            <span class="box-title">🧭 باکس مدیریت</span>
+            <span class="box-right"><span class="collapse-arrow">▾</span></span>
+        </summary>
+        <div class="collapsible-body">
+        <div class="charts-grid-4 mgmt-rings">
+            <div class="chart-card interactive" id="energyCardBtn" title="تنظیم دستی انرژی">
+                <div class="chart-wrapper">
+                    <svg class="circular-chart" viewBox="0 0 100 100">
+                        <defs>
+                            <linearGradient id="energyChartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#10b981" />
+                                <stop offset="50%" stop-color="#06b6d4" />
+                                <stop offset="100%" stop-color="#3b82f6" />
+                            </linearGradient>
+                        </defs>
+                        <circle class="circle-bg" cx="50" cy="50" r="42" />
+                        <circle class="circle-progress energy-progress" id="energyCircleProgress" cx="50" cy="50" r="42" />
+                    </svg>
+                    <div class="chart-content">
+                        <div class="percent-text" id="energyPercentText">0%</div>
+                        <div class="percent-label">انرژی مغز</div>
+                    </div>
+                </div>
+                <div class="chart-hint">⚡ تنظیم دستی</div>
+            </div>
+
+            <div class="chart-card interactive" id="tasksCardBtn" title="مشاهده جزئیات تسک‌ها">
+                <div class="chart-wrapper">
+                    <svg class="circular-chart" viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="42" />
+                        <circle class="circle-progress tasks-progress" id="tasksCircleProgress" cx="50" cy="50" r="42" />
+                    </svg>
+                    <div class="chart-content">
+                        <div class="percent-text" id="tasksPercentText">0%</div>
+                        <div class="percent-label">مدیریت تسک‌ها</div>
+                    </div>
+                </div>
+                <div class="chart-hint" style="color:#2563eb;" id="tasksHintText">📌 تسک‌های فعال</div>
+            </div>
+
+            <div class="chart-card interactive" id="debtCardBtn" title="مشاهده جزئیات بدهی و طلب">
+                <div class="chart-wrapper">
+                    <svg class="circular-chart" viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="42" />
+                        <circle class="circle-progress debt-progress" id="debtCircleProgress" cx="50" cy="50" r="42" />
+                    </svg>
+                    <div class="chart-content">
+                        <div class="percent-text" id="debtPercentText">0%</div>
+                        <div class="percent-label">بدهی و طلب</div>
+                    </div>
+                </div>
+                <div class="chart-hint" style="color:#dc2626;" id="debtHintText">📊 تحلیل مالی</div>
+            </div>
+
+            <div class="chart-card interactive" id="vibrationCardBtn" title="مشاهده جزئیات ارتعاش روزانه">
+                <div class="chart-wrapper">
+                    <svg class="circular-chart" viewBox="0 0 100 100">
+                        <circle class="circle-bg" cx="50" cy="50" r="42" />
+                        <circle class="circle-progress vibration-progress" id="vibrationCircleProgress" cx="50" cy="50" r="42" />
+                    </svg>
+                    <div class="chart-content">
+                        <div class="percent-text" id="vibrationPercentText">0%</div>
+                        <div class="percent-label">ارتعاش روزانه</div>
+                    </div>
+                </div>
+                <div class="chart-hint" style="color:#10b981;" id="vibrationHintText">✨ ارتعاش مثبت</div>
+            </div>
+        </div>
+        </div>
+    </details>
+
+    <!-- باکس برنامه (کشویی) -->
+    <details class="box-card collapsible" id="planBox" open>
+        <summary class="box-header">
+            <span class="box-title">🗂️ باکس برنامه</span>
+            <span class="box-right"><span class="collapse-arrow">▾</span></span>
+        </summary>
+        <div class="collapsible-body">
+            <div class="google-services-grid">
+                <div class="service-column">
+                    <div class="column-header">
+                        <div class="column-title">📅 تقویم گوگل امروز</div>
+                        <a href="https://calendar.google.com" target="_blank" class="column-link">باز کردن تقویم ↗</a>
+                    </div>
+                    <div id="calendarList">
+                        <div class="empty-text">در حال بارگذاری تقویم...</div>
+                    </div>
+                </div>
+                <div class="service-column">
+                    <div class="column-header">
+                        <div class="column-title">📌 گوگل تسک</div>
+                        <a href="https://tasks.google.com" target="_blank" class="column-link">باز کردن تسک‌ها ↗</a>
+                    </div>
+                    <div id="taskList">
+                        <div class="empty-text">در حال بارگذاری تسک‌ها...</div>
+                    </div>
                 </div>
             </div>
-            <div class="chart-hint" style="color:#ef4444;">🛒 خرج کرد</div>
         </div>
-
-        <!-- 3. طلب -->
-        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم طلب">
-            <div class="chart-wrapper">
-                <svg class="circular-chart" viewBox="0 0 100 100">
-                    <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress receivable-progress" id="receivableCircleProgress" cx="50" cy="50" r="42" />
-                </svg>
-                <div class="chart-content">
-                    <div class="percent-text" id="receivablePercentText">0%</div>
-                    <div class="percent-label">طلب</div>
-                </div>
-            </div>
-            <div class="chart-hint" style="color:#3b82f6;">🤝 مطالبه وجه</div>
+    </details>
+    <footer class="app-footer">
+        <div class="footer-status">
+            <span class="status-dot loading" id="refreshDot"></span>
+            <span id="refreshStatus">آخرین بروزرسانی: در حال دریافت...</span>
         </div>
-
-        <!-- 4. بدهی -->
-        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم بدهی">
-            <div class="chart-wrapper">
-                <svg class="circular-chart" viewBox="0 0 100 100">
-                    <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress liability-progress" id="liabilityCircleProgress" cx="50" cy="50" r="42" />
-                </svg>
-                <div class="chart-content">
-                    <div class="percent-text" id="liabilityPercentText">0%</div>
-                    <div class="percent-label">بدهی</div>
-                </div>
-            </div>
-            <div class="chart-hint" style="color:#d97706;">💳 تعهدات</div>
-        </div>
-
-        <!-- 5. سرمایه‌گذاری -->
-        <div class="chart-card interactive" onclick="openFinancialModal()" title="تنظیم سرمایه‌گذاری">
-            <div class="chart-wrapper">
-                <svg class="circular-chart" viewBox="0 0 100 100">
-                    <circle class="circle-bg" cx="50" cy="50" r="42" />
-                    <circle class="circle-progress investment-progress" id="investmentCircleProgress" cx="50" cy="50" r="42" />
-                </svg>
-                <div class="chart-content">
-                    <div class="percent-text" id="investmentPercentText">0%</div>
-                    <div class="percent-label">سرمایه‌گذاری</div>
-                </div>
-            </div>
-            <div class="chart-hint" style="color:#8b5cf6;">📈 توسعه دارایی</div>
-        </div>
-    </div>
-
-    <!-- The One Thing Display Card -->
-    <div class="onething-card" id="oneThingCard">
-        <div class="onething-info">
-            <span class="onething-label">🎯 هدف کلیدی امروز (The One Thing)</span>
-            <span class="onething-value" id="displayOneThing">هنوز تعییین نشده است (کلیک برای ثبت)</span>
-        </div>
-        <button class="action-sm-btn" onclick="openPersonalModal()">ویرایش</button>
-    </div>
-
-    <!-- Chair Sitting Timer Card -->
-    <div class="chair-timer-card">
-        <div class="chair-timer-header">
-            <div class="chair-timer-title">🪑 تایمر سلامت نشستن (صندلی)</div>
-            <div class="chair-status" id="chairStatusText">آماده به کار</div>
-        </div>
-        <div class="chair-timer-body">
-            <div class="chair-display" id="chairDisplay">45:00</div>
-            <div class="chair-controls-row">
-                <select id="chairTimeSelect" class="form-select" style="max-width: 140px;">
-                    <option value="25">۲۵ دقیقه</option>
-                    <option value="45" selected>۴۵ دقیقه</option>
-                    <option value="60">۶۰ دقیقه</option>
-                </select>
-                <button class="action-sm-btn" id="chairStartBtn" onclick="toggleChairTimer()" style="padding: 8px 16px; font-size: 0.8rem;">شروع تایمر</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="quote-box" id="timeQuote">
-        «زمان دارایی تجدیدناپذیری است؛ آن را خرج نکن، سرمایه‌گذاری کن.»
-    </div>
-
-    <!-- Coaching Section -->
-    <div class="coaching-card" id="coachingCard">
-        <div class="coaching-header">🧠 تحلیل و کوچینگ هوشمند (زمان و تسک‌ها)</div>
-        <div class="coaching-body" id="coachingText">در حال پردازش وضعیت کارها و تسک‌ها...</div>
-    </div>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">ساعت‌های سپری شده</div>
-            <div class="stat-value" id="elapsedTimeStat">--:--</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">شاخص بار تقویم امروز</div>
-            <div class="stat-value" id="calendarLoadStatus">در حال تحلیل...</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">تعداد کل تسک‌ها</div>
-            <div class="stat-value" id="taskStatsStatus">0</div>
-        </div>
-    </div>
-
-    <!-- 2-Column Section -->
-    <div class="google-services-grid">
-        <div class="service-column">
-            <div class="column-header">
-                <div class="column-title">📅 تقویم گوگل امروز</div>
-                <a href="https://calendar.google.com" target="_blank" class="column-link">باز کردن تقویم ↗</a>
-            </div>
-            <div id="calendarList">
-                <div class="empty-text">در حال بارگذاری تقویم...</div>
-            </div>
-        </div>
-        <div class="service-column">
-            <div class="column-header">
-                <div class="column-title">📌 گوگل تسک</div>
-                <a href="https://tasks.google.com" target="_blank" class="column-link">باز کردن تسک‌ها ↗</a>
-            </div>
-            <div id="taskList">
-                <div class="empty-text">در حال بارگذاری تسک‌ها...</div>
-            </div>
-        </div>
-    </div>
-    <div class="refresh-status" id="refreshStatus">آخرین بروزرسانی: در حال دریافت...</div>
+        <div class="footer-brand">⚓ سکان</div>
+        <div class="footer-note">فرماندهی روزت · مینی‌اپ تلگرام · بروزرسانی خودکار هر ۵ دقیقه</div>
+    </footer>
 </div>
 
 <!-- Modals -->
@@ -1154,42 +996,9 @@
     </div>
 </div>
 
-<!-- Financial Settings Modal -->
-<div class="modal-overlay" id="financialModal">
-    <div class="modal-card">
-        <div class="modal-title">💰 تنظیم دستی ارقام مالی (درصد)</div>
-        <div class="form-group">
-            <label class="form-label">💵 درصد تحقق درآمد</label>
-            <input type="number" id="inputIncome" class="form-input" min="0" max="100" placeholder="مثلاً 70">
-        </div>
-        <div class="form-group">
-            <label class="form-label">🛒 درصد صرف شده هزینه از بودجه</label>
-            <input type="number" id="inputExpense" class="form-input" min="0" max="100" placeholder="مثلاً 40">
-        </div>
-        <div class="form-group">
-            <label class="form-label">🤝 درصد وصول طلب‌ها</label>
-            <input type="number" id="inputReceivable" class="form-input" min="0" max="100" placeholder="مثلاً 50">
-        </div>
-        <div class="form-group">
-            <label class="form-label">💳 درصد پرداخت بدهی‌ها</label>
-            <input type="number" id="inputLiability" class="form-input" min="0" max="100" placeholder="مثلاً 30">
-        </div>
-        <div class="form-group">
-            <label class="form-label">📈 درصد پیشرفت سرمایه‌گذاری</label>
-            <input type="number" id="inputInvestment" class="form-input" min="0" max="100" placeholder="مثلاً 60">
-        </div>
-        <button class="modal-submit-btn" onclick="saveFinancialSettings()">ذخیره تغییرات مالی</button>
-        <button class="modal-close-btn" onclick="closeFinancialModal()">بستن</button>
-    </div>
-</div>
-
 <div class="modal-overlay" id="personalModal">
     <div class="modal-card">
         <div class="modal-title">⚙️ تنظیمات روزانه و مدیریت فردی</div>
-        <div class="form-group">
-            <label class="form-label">🎯 هدف کلیدی امروز (The One Thing)</label>
-            <input type="text" id="inputOneThing" class="form-input" placeholder="مثلاً: تکمیل نهایی لندینگ سپند وب">
-        </div>
         <div class="form-group">
             <label class="form-label">💻 حالت کاری امروز (Work Mode)</label>
             <select id="inputWorkMode" class="form-select">
@@ -1242,14 +1051,18 @@
 </div>
 
 <script>
+    // ===== FIX #1: توکن احراز هویت برای GAS_URL =====
+    // این توکن را در Apps Script سمت سرور خودت هم همین‌طور تنظیم کن و در doGet چک کن:
+    //   if (e.parameter.token !== 'GAS_SECRET_TOKEN_قرار_بده_یک_رشته_تصادفی_طولانی') return ContentService.createTextOutput('Unauthorized');
+    const GAS_SECRET_TOKEN = 'CHANGE_ME_به_یک_رشته_تصادفی_طولانی_تغییر_بده';
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbyM7_r6et0xz-1W1pV1iTYgciLeALMchllPOCPLIFuWp7Mcwz7I7cCvuALswQaG2rZ6/exec';
-    const quotes = [
-        "«زمان دارایی تجدیدناپذیری است؛ آن را خرج نکن، سرمایه‌گذاری کن.»",
-        "«امروز، همان فردایی است که دیروز نگرانش بودی. چه کردی؟»",
-        "«تفاوت برندگان و بازندگان در نحوه مدیریت این ۲۴ ساعت مشترک است.»",
-        "«زندگی شمارش معکوس است؛ هر ثانیه که می‌گذرد، یعنی یک قدم جلوتر یا درجا زدن.»",
-        "«کارهای بزرگ با انباشت دقیقه‌های کوچک متمرکز ساخته می‌شوند.»"
-    ];
+
+    // ===== FIX #2: تابع escape برای جلوگیری از XSS =====
+    function esc(str) {
+        const div = document.createElement('div');
+        div.textContent = str == null ? '' : String(str);
+        return div.innerHTML;
+    }
 
     const tg = window.Telegram?.WebApp;
     if (tg) {
@@ -1259,7 +1072,7 @@
 
     const themeBtn = document.getElementById('themeBtn');
     let currentTheme = localStorage.getItem('theme') || (tg && tg.colorScheme ? tg.colorScheme : 'light');
-    
+
     function applyTheme(theme) {
         document.documentElement.setAttribute('data-theme', theme);
         themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
@@ -1272,6 +1085,16 @@
         applyTheme(currentTheme);
     });
 
+    // بونوس: سینک با تغییر تم تلگرام در لحظه
+    if (tg && tg.onEvent) {
+        tg.onEvent('themeChanged', () => {
+            if (!localStorage.getItem('theme_manual_override')) {
+                currentTheme = tg.colorScheme || currentTheme;
+                applyTheme(currentTheme);
+            }
+        });
+    }
+
     const fullscreenBtn = document.getElementById('fullscreenBtn');
     fullscreenBtn.addEventListener('click', () => {
         if (!document.fullscreenElement) {
@@ -1283,88 +1106,6 @@
 
     const refreshBtn = document.getElementById('refreshBtn');
     refreshBtn.addEventListener('click', () => loadTasksFromGoogle());
-
-    // مدیریت تایمر سلامت نشستن (صندلی)
-    let chairInterval;
-    let chairTotalSeconds = 45 * 60;
-    let chairTimeLeft = chairTotalSeconds;
-    let chairIsRunning = false;
-
-    const chairDisplay = document.getElementById('chairDisplay');
-    const chairStartBtn = document.getElementById('chairStartBtn');
-    const chairTimeSelect = document.getElementById('chairTimeSelect');
-    const chairStatusText = document.getElementById('chairStatusText');
-
-    chairTimeSelect.addEventListener('change', () => {
-        if (!chairIsRunning) {
-            chairTotalSeconds = parseInt(chairTimeSelect.value) * 60;
-            chairTimeLeft = chairTotalSeconds;
-            updateChairDisplay();
-        }
-    });
-
-    function updateChairDisplay() {
-        const minutes = Math.floor(chairTimeLeft / 60);
-        const seconds = chairTimeLeft % 60;
-        chairDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
-
-    function playChairAlarm() {
-        try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 1.5);
-        } catch(e) {}
-    }
-
-    function toggleChairTimer() {
-        if (!chairIsRunning) {
-            if (chairTimeLeft <= 0) chairTimeLeft = parseInt(chairTimeSelect.value) * 60;
-            chairIsRunning = true;
-            chairStartBtn.textContent = 'توقف / ریست';
-            chairStartBtn.style.background = '#ef4444';
-            chairTimeSelect.disabled = true;
-            chairStatusText.textContent = 'در حال شمارش... آماده بلند شدن باشید';
-
-            chairInterval = setInterval(() => {
-                chairTimeLeft--;
-                updateChairDisplay();
-                if (chairTimeLeft <= 0) {
-                    clearInterval(chairInterval);
-                    playChairAlarm();
-                    chairStatusText.textContent = '⚠️ وقت استراحت و کشش عضلات است!';
-                    if (window.Telegram?.WebApp?.HapticFeedback) {
-                        window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
-                    }
-                    alert('وقت تمام شد! لطفاً از روی صندلی بلند شوید و کمی قدم بزنید.');
-                    resetChairTimer();
-                }
-            }, 1000);
-        } else {
-            resetChairTimer();
-        }
-    }
-
-    function resetChairTimer() {
-        clearInterval(chairInterval);
-        chairIsRunning = false;
-        chairTotalSeconds = parseInt(chairTimeSelect.value) * 60;
-        chairTimeLeft = chairTotalSeconds;
-        updateChairDisplay();
-        chairStartBtn.textContent = 'شروع تایمر';
-        chairStartBtn.style.background = '#2563eb';
-        chairTimeSelect.disabled = false;
-        chairStatusText.textContent = 'آماده به کار';
-    }
-
-    updateChairDisplay();
 
     // مدیریت مدال‌ها
     const tasksCardBtn = document.getElementById('tasksCardBtn');
@@ -1388,60 +1129,6 @@
     vibrationCardBtn.addEventListener('click', () => vibrationModal.classList.add('active'));
     function closeVibrationModal() { vibrationModal.classList.remove('active'); }
 
-    // مدال و مدیریت مالی
-    const financialModal = document.getElementById('financialModal');
-    function openFinancialModal() {
-        document.getElementById('inputIncome').value = localStorage.getItem('fin_income') || '60';
-        document.getElementById('inputExpense').value = localStorage.getItem('fin_expense') || '40';
-        document.getElementById('inputReceivable').value = localStorage.getItem('fin_receivable') || '50';
-        document.getElementById('inputLiability').value = localStorage.getItem('fin_liability') || '30';
-        document.getElementById('inputInvestment').value = localStorage.getItem('fin_investment') || '50';
-        financialModal.classList.add('active');
-    }
-    function closeFinancialModal() { financialModal.classList.remove('active'); }
-
-    function saveFinancialSettings() {
-        const income = Math.min(100, Math.max(0, parseInt(document.getElementById('inputIncome').value) || 0));
-        const expense = Math.min(100, Math.max(0, parseInt(document.getElementById('inputExpense').value) || 0));
-        const receivable = Math.min(100, Math.max(0, parseInt(document.getElementById('inputReceivable').value) || 0));
-        const liability = Math.min(100, Math.max(0, parseInt(document.getElementById('inputLiability').value) || 0));
-        const investment = Math.min(100, Math.max(0, parseInt(document.getElementById('inputInvestment').value) || 0));
-
-        localStorage.setItem('fin_income', income);
-        localStorage.setItem('fin_expense', expense);
-        localStorage.setItem('fin_receivable', receivable);
-        localStorage.setItem('fin_liability', liability);
-        localStorage.setItem('fin_investment', investment);
-
-        updateFinancialUI();
-        closeFinancialModal();
-    }
-
-    function updateFinancialUI() {
-        const income = parseInt(localStorage.getItem('fin_income') || '60');
-        const expense = parseInt(localStorage.getItem('fin_expense') || '40');
-        const receivable = parseInt(localStorage.getItem('fin_receivable') || '50');
-        const liability = parseInt(localStorage.getItem('fin_liability') || '30');
-        const investment = parseInt(localStorage.getItem('fin_investment') || '50');
-
-        const circumference = 263.89;
-
-        document.getElementById('incomeCircleProgress').style.strokeDashoffset = circumference - (income / 100) * circumference;
-        document.getElementById('incomePercentText').textContent = `${income}%`;
-
-        document.getElementById('expenseCircleProgress').style.strokeDashoffset = circumference - (expense / 100) * circumference;
-        document.getElementById('expensePercentText').textContent = `${expense}%`;
-
-        document.getElementById('receivableCircleProgress').style.strokeDashoffset = circumference - (receivable / 100) * circumference;
-        document.getElementById('receivablePercentText').textContent = `${receivable}%`;
-
-        document.getElementById('liabilityCircleProgress').style.strokeDashoffset = circumference - (liability / 100) * circumference;
-        document.getElementById('liabilityPercentText').textContent = `${liability}%`;
-
-        document.getElementById('investmentCircleProgress').style.strokeDashoffset = circumference - (investment / 100) * circumference;
-        document.getElementById('investmentPercentText').textContent = `${investment}%`;
-    }
-
     function processTasksManagementData(taskItems) {
         lastTaskItems = taskItems || [];
         const total = lastTaskItems.length;
@@ -1461,6 +1148,7 @@
         }
 
         let completedCount = 0;
+        // FIX #2: استفاده از esc() برای جلوگیری از XSS
         let modalHtml = `<div style="margin-bottom:8px; font-weight:700; color:#2563eb;">لیست تسک‌های فعال امروز (${total} مورد - برای تیک زدن کلیک کنید):</div><ul style="padding-right:16px; list-style:none;">`;
 
         lastTaskItems.forEach(t => {
@@ -1472,9 +1160,9 @@
                 <li style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; background:var(--item-bg); border:1px solid var(--border-color); padding:8px 10px; border-radius:10px; cursor:pointer;" onclick="toggleTaskManagementItem('${encodeURIComponent(taskId)}')">
                     <span style="display:flex; align-items:center; gap:6px;">
                         <span>${isDone ? '✅' : '⏳'}</span>
-                        <span style="${isDone ? 'text-decoration: line-through; color:var(--text-sub);' : ''}">${(t.title || '').replace(/^📌\s*/, '')}</span>
+                        <span style="${isDone ? 'text-decoration: line-through; color:var(--text-sub);' : ''}">${esc((t.title || '').replace(/^📌\s*/, ''))}</span>
                     </span>
-                    <span class="task-time">${t.time || 'امروز'}</span>
+                    <span class="task-time">${esc(t.time || 'امروز')}</span>
                 </li>`;
         });
         modalHtml += `</ul>`;
@@ -1500,10 +1188,15 @@
         processTasksManagementData(lastTaskItems);
     }
 
+    // ===== FIX #3: حذف نام‌های شخصی از فیلتر بدهی/طلب =====
+    // قبلاً کلماتی مثل نام افراد اینجا بود که باعث می‌شد هر تسکی با آن نام
+    // (حتی بی‌ربط به موضوع مالی) به‌اشتباه در دسته «بدهی/طلب» بیفتد.
+    // فقط به کلمات موضوعی مالی اکتفا شده:
     function processDebtData(taskItems) {
+        const debtKeywords = ['بدهی', 'طلب', 'قرض', 'چک', 'وام', 'اقساط', 'بدهکار', 'طلبکار'];
         lastDebtTasks = (taskItems || []).filter(item => {
             const t = (item.title || '').toLowerCase();
-            return t.includes('بدهی') || t.includes('طلب') || t.includes('قرض') || t.includes('چک') || t.includes('وام') || t.includes('کیانوش') || t.includes('کاووس') || t.includes('امیر');
+            return debtKeywords.some(k => t.includes(k));
         });
 
         const totalTasks = (taskItems || []).length;
@@ -1520,7 +1213,7 @@
         if (debtCount > 0) {
             modalHtml = `<div style="margin-bottom:8px; font-weight:700; color:#dc2626;">تسک‌های بدهی و طلب (${debtCount} مورد):</div><ul style="padding-right:16px;">`;
             lastDebtTasks.forEach(dt => {
-                modalHtml += `<li style="margin-bottom:6px;">${dt.title.replace(/^📌\s*/, '')} (${dt.time || 'امروز'})</li>`;
+                modalHtml += `<li style="margin-bottom:6px;">${esc(dt.title.replace(/^📌\s*/, ''))} (${esc(dt.time || 'امروز')})</li>`;
             });
             modalHtml += `</ul>`;
         } else {
@@ -1531,7 +1224,7 @@
 
     function processVibrationData(taskItems) {
         const keywords = ['مدیتیشن', 'پیاده', 'ورزش', 'آب', 'شکرگزاری', 'مطالعه', 'موزیک', 'استراحت', 'کتاب', 'تنفس', 'پیاده‌روی'];
-        
+
         const vibItems = (taskItems || []).filter(item => {
             const t = (item.title || '').toLowerCase();
             return keywords.some(k => t.includes(k));
@@ -1569,9 +1262,9 @@
                 <li style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; background:var(--item-bg); border:1px solid var(--border-color); padding:8px 10px; border-radius:10px; cursor:pointer;" onclick="toggleVibrationTask('${encodeURIComponent(taskId)}')">
                     <span style="display:flex; align-items:center; gap:6px;">
                         <span>${isDone ? '✅' : '⏳'}</span>
-                        <span style="${isDone ? 'text-decoration: line-through; color:var(--text-sub);' : ''}">${vt.title.replace(/^📌\s*/, '')}</span>
+                        <span style="${isDone ? 'text-decoration: line-through; color:var(--text-sub);' : ''}">${esc(vt.title.replace(/^📌\s*/, ''))}</span>
                     </span>
-                    <span class="task-time">${vt.time || 'امروز'}</span>
+                    <span class="task-time">${esc(vt.time || 'امروز')}</span>
                 </li>`;
         });
         modalHtml += `</ul>`;
@@ -1604,7 +1297,6 @@
     function setManualEnergy(val, label) {
         localStorage.setItem('manual_energy_val', val);
         localStorage.setItem('manual_energy_date', new Date().toDateString());
-        document.getElementById('energyPercentText').nextElementSibling.textContent = 'انرژی مغز';
         closeEnergyModal();
         updateTimer();
     }
@@ -1622,7 +1314,6 @@
     function openPersonalModal() {
         const todayKey = new Date().toDateString();
         if (localStorage.getItem('settings_date') === todayKey) {
-            document.getElementById('inputOneThing').value = localStorage.getItem('one_thing') || '';
             document.getElementById('inputWorkMode').value = localStorage.getItem('work_mode') || 'deep';
             document.getElementById('inputSleepHours').value = localStorage.getItem('sleep_hours') || '7';
             document.getElementById('inputStressLevel').value = localStorage.getItem('stress_level') || 'normal';
@@ -1635,48 +1326,20 @@
 
     function savePersonalSettings() {
         localStorage.setItem('settings_date', new Date().toDateString());
-        localStorage.setItem('one_thing', document.getElementById('inputOneThing').value.trim());
         localStorage.setItem('work_mode', document.getElementById('inputWorkMode').value);
         localStorage.setItem('sleep_hours', document.getElementById('inputSleepHours').value);
         localStorage.setItem('stress_level', document.getElementById('inputStressLevel').value);
         localStorage.setItem('project_focus', document.getElementById('inputProjectFocus').value);
-        updatePersonalUI();
         closePersonalModal();
         updateTimer();
-    }
-
-    function updatePersonalUI() {
-        const oneThing = localStorage.getItem('one_thing');
-        const displayEl = document.getElementById('displayOneThing');
-        if (oneThing) {
-            displayEl.textContent = oneThing;
-            displayEl.style.color = 'var(--text-main)';
-        } else {
-            displayEl.textContent = 'هنوز تعییین نشده است (کلیک برای ثبت)';
-            displayEl.style.color = 'var(--text-sub)';
-        }
-    }
-
-    function updateCoachingAdvice(taskCount, eventCount) {
-        const workMode = localStorage.getItem('work_mode') || 'deep';
-        const stressLevel = localStorage.getItem('stress_level') || 'normal';
-        const projectFocus = localStorage.getItem('project_focus') || 'sepand';
-
-        let modeText = workMode === 'meetings' ? "روز جلسات و ارتباطات 🤝" : workMode === 'recovery' ? "روز سبک و ریکاوری 🌿" : "حالت کار عمیق 💻";
-        let stressText = stressLevel === 'stressed' ? `⚠️ استرس بالا گزارش شده است. تنفس عمیق فراموش نشود.` : `🔹 وضعیت ذهنی متمرکز روی پروژه (${projectFocus}).`;
-
-        document.getElementById('coachingText').innerHTML = `
-            <div>📌 <b>مدیریت تسک‌ها و زمان:</b> حالت امروز: ${modeText}. تعداد تسک‌ها: ${taskCount}</div>
-            <div style="margin-top: 6px;">${stressText}</div>
-            <span class="coaching-section-title">📊 وضعیت مالی و ارتعاش:</span>
-            <div>تعداد ${lastDebtTasks.length} تسک مالی و ${lastVibrationTasks.length} تسک ارتعاش مثبت شناسایی شد.</div>
-        `;
     }
 
     function loadTasksFromGoogle() {
         const calendarListDiv = document.getElementById('calendarList');
         const taskListDiv = document.getElementById('taskList');
         const refreshStatus = document.getElementById('refreshStatus');
+        const refreshDot = document.getElementById('refreshDot');
+        if (refreshDot) refreshDot.className = 'status-dot loading';
         const callbackName = 'handleGoogleTasksResponse';
 
         refreshBtn.style.transform = 'rotate(360deg)';
@@ -1687,6 +1350,7 @@
                 calendarListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">خطای ارتباط با سرور</div>';
                 taskListDiv.innerHTML = '<div class="empty-text" style="color:#d97706;">برای تلاش مجدد کلیک کنید</div>';
                 refreshStatus.textContent = 'عدم دریافت پاسخ از سرور گوگل.';
+                if (refreshDot) refreshDot.className = 'status-dot err';
             }
         }, 6000);
 
@@ -1698,6 +1362,7 @@
             const now = new Date();
             const timeStr = now.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             refreshStatus.textContent = `آخرین بروزرسانی: ساعت ${timeStr}`;
+            if (refreshDot) refreshDot.className = 'status-dot';
 
             let calendarItems = [];
             let taskItems = [];
@@ -1715,15 +1380,10 @@
                 }
             } catch(e) {}
 
-            document.getElementById('taskStatsStatus').textContent = taskStats.total || taskItems.length;
             processTasksManagementData(taskItems);
             processDebtData(taskItems);
             processVibrationData(taskItems);
-            updateCoachingAdvice(taskStats.total || taskItems.length, calendarItems.length);
 
-            const eventCount = calendarItems.length;
-            let loadText = eventCount === 0 ? "روز آزاد و خلوت 🍃" : eventCount >= 4 ? "روز فشرده و پرکار 🔥" : "تقویم متعادل ⚖️";
-            document.getElementById('calendarLoadStatus').textContent = loadText;
 
             if (calendarItems.length === 0) {
                 calendarListDiv.innerHTML = '<div class="empty-text">رویدادی برای امروز ثبت نشده است.</div>';
@@ -1733,7 +1393,8 @@
                     el.className = 'task-item';
                     el.href = 'https://calendar.google.com';
                     el.target = '_blank';
-                    el.innerHTML = `<span>${item.title || ''}</span> <span class="task-time">${item.time || ''}</span>`;
+                    // FIX #2: escape شده
+                    el.innerHTML = `<span>${esc(item.title)}</span> <span class="task-time">${esc(item.time)}</span>`;
                     calendarListDiv.appendChild(el);
                 });
             }
@@ -1747,7 +1408,8 @@
                     el.className = 'task-item';
                     el.href = 'https://tasks.google.com';
                     el.target = '_blank';
-                    el.innerHTML = `<span>${cleanTitle}</span> <span class="task-time">${item.time || 'تسک'}</span>`;
+                    // FIX #2: escape شده
+                    el.innerHTML = `<span>${esc(cleanTitle)}</span> <span class="task-time">${esc(item.time || 'تسک')}</span>`;
                     taskListDiv.appendChild(el);
                 });
             }
@@ -1758,64 +1420,118 @@
 
         const script = document.createElement('script');
         script.id = 'gasScript';
-        script.src = `${GAS_URL}?callback=${callbackName}`;
+        // FIX #1: ارسال توکن به همراه درخواست
+        script.src = `${GAS_URL}?callback=${callbackName}&token=${encodeURIComponent(GAS_SECRET_TOKEN)}`;
         script.onerror = function() {
             clearTimeout(timeoutId);
             calendarListDiv.innerHTML = '<div class="empty-text" style="color:#dc2626;">خطا در ارتباط</div>';
             taskListDiv.innerHTML = '<div class="empty-text" style="color:#dc2626;">خطا در ارتباط</div>';
             refreshStatus.textContent = 'خطا در ارتباط با اسکریپت گوگل.';
+            if (refreshDot) refreshDot.className = 'status-dot err';
         };
         document.body.appendChild(script);
     }
 
-    function updateQuote() {
-        const hour = new Date().getHours();
-        document.getElementById('timeQuote').textContent = quotes[Math.floor(hour / 5) % quotes.length];
+    // ===== زمان بر اساس ساعت و تقویم ایران =====
+    const TZ = 'Asia/Tehran';
+    const DAY_MS = 86400000;
+    const PERSIAN_MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+    const SEASONS = [
+        { name: 'بهار', icon: '🌸' },
+        { name: 'تابستان', icon: '☀️' },
+        { name: 'پاییز', icon: '🍂' },
+        { name: 'زمستان', icon: '❄️' }
+    ];
+    const tzPartsFormatter = new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn', {
+        timeZone: TZ, year: 'numeric', month: 'numeric', day: 'numeric',
+        hour: 'numeric', minute: 'numeric', second: 'numeric', hourCycle: 'h23'
+    });
+    const weekdayFormatter = new Intl.DateTimeFormat('fa-IR', { timeZone: TZ, weekday: 'long' });
+    const fa = n => Number(n).toLocaleString('fa-IR', { useGrouping: false });
+
+    function getTehranParts(date) {
+        const o = {};
+        tzPartsFormatter.formatToParts(date).forEach(p => {
+            if (p.type !== 'literal' && p.type !== 'era') o[p.type] = parseInt(p.value, 10);
+        });
+        return o;
+    }
+
+    // طول سال شمسی (۳۶۵ یا ۳۶۶) از فاصله‌ی ۱ فروردین امسال تا ۱ فروردین سال بعد
+    let yearLenCache = { year: null, len: 365 };
+    function getYearLength(pYear, dayOfYear, secOfDay, now) {
+        if (yearLenCache.year === pYear) return yearLenCache.len;
+        const noonToday = now.getTime() - secOfDay * 1000 + 12 * 3600 * 1000;
+        const nowruz = noonToday - (dayOfYear - 1) * DAY_MS;
+        let len = 365;
+        for (let k = 364; k <= 367; k++) {
+            const p = getTehranParts(new Date(nowruz + k * DAY_MS));
+            if (p.month === 1 && p.day === 1) { len = k; break; }
+        }
+        yearLenCache = { year: pYear, len };
+        return len;
+    }
+
+    function monthLength(m, yearLen) {
+        if (m <= 6) return 31;
+        if (m <= 11) return 30;
+        return yearLen - 336; // اسفند: ۲۹ یا ۳۰
+    }
+
+    function setRing(prefix, pct, valueText, subText) {
+        const c = 263.89;
+        const clamped = Math.min(100, Math.max(0, pct));
+        document.getElementById(prefix + 'CircleProgress').style.strokeDashoffset = c - (clamped / 100) * c;
+        document.getElementById(prefix + 'PercentText').textContent = clamped.toFixed(1) + '%';
+        document.getElementById(prefix + 'Value').textContent = valueText;
+        document.getElementById(prefix + 'Sub').textContent = subText;
     }
 
     function updateTimer() {
         const now = new Date();
-        const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-        const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
-            
-        const totalDayMs = 24 * 60 * 60 * 1000;
-        const elapsedMs = now - startOfDay;
-        const remainingMs = Math.max(0, endOfDay - now);
-        const percent = Math.min(100, (elapsedMs / totalDayMs) * 100);
+        const tp = getTehranParts(now);
+        const h = tp.hour % 24, m = tp.minute, s = tp.second;
+        const secOfDay = h * 3600 + m * 60 + s;
+        const dayFraction = secOfDay / 86400;
+        const pad = n => String(n).padStart(2, '0');
 
-        const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
-        const clockStr = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-        const remainingStr = `${String(Math.floor((remainingMs / (1000 * 60 * 60)) % 24)).padStart(2, '0')}:${String(Math.floor((remainingMs / (1000 * 60)) % 60)).padStart(2, '0')}:${String(Math.floor((remainingMs / 1000) % 60)).padStart(2, '0')}`;
-        const elapsedStr = `${String(Math.floor((elapsedMs / (1000 * 60 * 60)) % 24)).padStart(2, '0')}:${String(Math.floor((elapsedMs / (1000 * 60)) % 60)).padStart(2, '0')}`;
-
-        document.getElementById('currentClock').textContent = clockStr;
-        document.getElementById('elapsedTime').textContent = elapsedStr;
-        document.getElementById('remainingTime').textContent = remainingStr;
-        document.getElementById('elapsedTimeStat').textContent = elapsedStr;
+        // ----- باکس روز -----
+        const remainingSec = Math.max(0, 86399 - secOfDay);
+        document.getElementById('currentClock').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+        document.getElementById('elapsedTime').textContent = `${pad(h)}:${pad(m)}`;
+        document.getElementById('remainingTime').textContent =
+            `${pad(Math.floor(remainingSec / 3600))}:${pad(Math.floor((remainingSec % 3600) / 60))}:${pad(remainingSec % 60)}`;
 
         let phaseText = h >= 6 && h < 12 ? "صبح؛ فاز تمرکز و خلق" : h >= 12 && h < 17 ? "ظهر؛ فاز اجرای عمیق" : h >= 17 && h < 22 ? "عصر؛ فاز تثبیت و بازبینی" : "استراحت و آرامش";
         document.getElementById('dayPhase').textContent = phaseText;
+        const greeting = h >= 5 && h < 12 ? 'صبح بخیر ☀️' : h >= 12 && h < 17 ? 'روز بخیر 🌤️' : h >= 17 && h < 21 ? 'عصر بخیر 🌇' : 'شب بخیر 🌙';
+        document.getElementById('headerGreeting').textContent = greeting;
 
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', calendar: 'persian' };
-        document.getElementById('currentDateTitle').textContent = new Intl.DateTimeFormat('fa-IR', options).format(now);
+        // ----- باکس زمان: سال / فصل / ماه / روز -----
+        const pYear = tp.year, pMonth = tp.month, pDay = tp.day;
+        let dayOfYear = pDay;
+        for (let i = 1; i < pMonth; i++) dayOfYear += i <= 6 ? 31 : 30;
+        const yearLen = getYearLength(pYear, dayOfYear, secOfDay, now);
+        const mLen = monthLength(pMonth, yearLen);
 
-        const startOfYear = new Date(now.getFullYear(), 2, 21);
-        let dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
-        if (dayOfYear < 1) dayOfYear += 365;
+        const seasonIdx = Math.floor((pMonth - 1) / 3);
+        let seasonLen = 0, seasonDay = pDay;
+        for (let i = seasonIdx * 3 + 1; i <= seasonIdx * 3 + 3; i++) {
+            const L = monthLength(i, yearLen);
+            seasonLen += L;
+            if (i < pMonth) seasonDay += L;
+        }
+        const season = SEASONS[seasonIdx];
 
-        let seasonName = "پاییز 🍂", seasonIcon = "🍂";
-        if (dayOfYear <= 93) { seasonName = "بهار 🌸"; seasonIcon = "🌸"; }
-        else if (dayOfYear <= 186) { seasonName = "تابستان ☀️"; seasonIcon = "☀️"; }
-        else if (dayOfYear <= 276) { seasonName = "پاییز 🍂"; seasonIcon = "🍂"; }
-        else { seasonName = "زمستان ❄️"; seasonIcon = "❄️"; }
-
-        document.getElementById('dayOfYearText').textContent = `روزشمار سال: روز ${dayOfYear} از ۳۶۵`;
-        document.getElementById('seasonBadge').textContent = seasonName;
-        document.getElementById('dateIcon').textContent = seasonIcon;
-
-        const featuredCircumference = 251.33;
-        document.getElementById('timeCircleProgress').style.strokeDashoffset = featuredCircumference - (percent / 100) * featuredCircumference;
-        document.getElementById('timeProgressPercent').textContent = `${percent.toFixed(1)}%`;
+        document.getElementById('currentDateTitle').textContent = `${weekdayFormatter.format(now)} ${fa(pDay)} ${PERSIAN_MONTHS[pMonth - 1]} ${fa(pYear)}`;
+        setRing('year', ((dayOfYear - 1) + dayFraction) / yearLen * 100,
+            `سال ${fa(pYear)}`, `روز ${fa(dayOfYear)} از ${fa(yearLen)}`);
+        setRing('season', ((seasonDay - 1) + dayFraction) / seasonLen * 100,
+            `${season.icon} ${season.name}`, `روز ${fa(seasonDay)} از ${fa(seasonLen)}`);
+        setRing('month', ((pDay - 1) + dayFraction) / mLen * 100,
+            PERSIAN_MONTHS[pMonth - 1], `روز ${fa(pDay)} از ${fa(mLen)}`);
+        setRing('day', dayFraction * 100,
+            `روز ${fa(pDay)}`, weekdayFormatter.format(now));
 
         let energyPercent = 50;
         const savedEnergyVal = localStorage.getItem('manual_energy_val');
@@ -1834,9 +1550,15 @@
         document.getElementById('energyPercentText').textContent = `${Math.round(energyPercent)}%`;
     }
 
-    updatePersonalUI();
-    updateFinancialUI();
-    updateQuote();
+    // حافظه‌ی باز/بسته بودن همه‌ی باکس‌های کشویی
+    document.querySelectorAll('details.collapsible').forEach(box => {
+        const key = 'box_open_' + box.id;
+        try { if (localStorage.getItem(key) === '0') box.removeAttribute('open'); } catch (e) {}
+        box.addEventListener('toggle', () => {
+            try { localStorage.setItem(key, box.open ? '1' : '0'); } catch (e) {}
+        });
+    });
+
     setInterval(updateTimer, 1000);
     updateTimer();
     loadTasksFromGoogle();
